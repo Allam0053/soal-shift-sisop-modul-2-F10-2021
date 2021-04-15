@@ -1,11 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <wait.h>
 #include <string.h>
 #include <time.h>
 #include <dirent.h>
+#include <stdbool.h>
+#include <fcntl.h>
 
 void listFilesRecursively(char *path);
 void listFiles(char *basePath);
@@ -17,6 +20,10 @@ int list_files=0;
 char folders[100][100];
 int list_folders=0;
 
+char kind[100][100];
+char name[100][100];
+char age[100][100];
+
 int main(){
 
     char zip_dir[]="/home/allam/";
@@ -27,7 +34,7 @@ int main(){
 
     int status;
 
-    pid_t cpid1,cpid2,cpid3,cpid4,cpid5,cpid6,cpid7;
+    pid_t cpid1,cpid2,cpid3,cpid4,cpid5,cpid6,cpid7,cpid8;
     //2a====================cpid1,cpid2
     cpid1 = fork();
     if (cpid1 < 0)
@@ -80,19 +87,18 @@ int main(){
     
     if (cpid5 == 0){
         listFiles("/home/allam/modul2/petshop");
-        char kind[100][100];
-        char name[100][100];
-        char age[100][100];
         char temp[100];
         char source[200], dest[200];
         char under[]="_";
         char jpg[]=".jpg";
         for(int i=0; i<list_files; i++){
             // printf("%s\n", files[i]);
+
             strcpy(temp, files[i]);
             strcpy(kind[i], strtok(temp,";"));
             strcpy(name[i], strtok(NULL,";"));
-            strcpy(age[i], strtok(NULL,";"));
+            strcpy(age[i], strtok(NULL,"j"));
+            age[i][strlen(age[i])-1] = '\0';
 
             sprintf(source, "%s/%s", target_loc, files[i]);
             if(strstr(files[i], jpg)==NULL){ //if 1 poto ada 2 hewan: duplicate, namai poto dg 1 hewan
@@ -133,20 +139,91 @@ int main(){
                 execv("/bin/mv", argv);
                 exit(0);
             }
+
         }
+
+        while ((wait(&status)) > 0);
+        FILE *output;
+        listFolder(target_loc);
+        // for(int j=0; j<list_files; j++){
+        //     printf("kind\t: %s\n", kind[j]);
+        //     printf("nama\t: %s\n", name[j]);
+        //     printf("umur\t: %s\b tahun\n", age[j]);
+        //     printf("\n");
+        // }
+        for(int i=0; i<list_folders; i++){
+            // printf("%s\n", folders[i]);
+            
+            while ((wait(&status)) > 0);
+            cpid8 = fork();
+            if (cpid8 < 0)
+                exit(1);
+            if ( cpid8 == 0){
+                sprintf(dest, "%s/%s/keterangan.txt", target_loc, folders[i]);
+                char *argv[] = {"touch", dest, NULL};
+                execv("/bin/touch", argv);
+                exit(0);
+            }
+
+            while ((wait(&status)) > 0);
+            cpid8 = fork();
+            if (cpid8 < 0)
+                exit(1);
+            if ( cpid8 == 0){
+                pid_t pid, sid;        // Variabel untuk menyimpan PID
+
+                pid = fork();     // Menyimpan PID dari Child Process
+
+                /* Keluar saat fork gagal
+                * (nilai variabel pid < 0) */
+                if (pid < 0) {
+                    exit(EXIT_FAILURE);
+                }
+
+                /* Keluar saat fork berhasil
+                * (nilai variabel pid adalah PID dari child process) */
+                if (pid > 0) {
+                    exit(EXIT_SUCCESS);
+                }
+
+                umask(0);
+
+                sid = setsid();
+                if (sid < 0) {
+                    exit(EXIT_FAILURE);
+                }
+
+                if ((chdir("/")) < 0) {
+                    exit(EXIT_FAILURE);
+                }
+                sprintf(dest, "%s/%s/keterangan.txt", target_loc, folders[i]);
+                printf("%s\n", dest);
+                output = fopen(dest, "w+");
+                umask(0);
+                for(int j=0; j<list_files; j++){
+                    if( strcmp(folders[i], kind[j])==0 ){
+                        fprintf(output, "nama : %s\n", name[j]);
+                        fprintf(output, "umur : %s tahun\n\n", age[j]);
+                    }
+                }
+                fclose(output);
+                exit(0);
+            }
+            
+        }
+
         exit(EXIT_SUCCESS);
     }
     
-    //2e
-    while ((wait(&status)) > 0);
-    cpid7 = fork();
-    if (cpid7 < 0)
-        exit(EXIT_FAILURE);
+    // //2e
+    // while ((wait(&status)) > 0);
+    // cpid7 = fork();
+    // if (cpid7 < 0)
+    //     exit(EXIT_FAILURE);
 
-    if(cpid7 == 0){
+    // if(cpid7 == 0){
         
-        FILE *output;
-    }
+    // }
 }
 
 void listFilesRecursively(char *basePath)
@@ -221,7 +298,7 @@ void listFolder(char *basePath)
 
     while ((dp = readdir(dir)) != NULL)
     {
-        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0){//check if it's folder
+        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0){//check folder
             strcpy(folders[list_folders++],dp->d_name);
         }
     }
