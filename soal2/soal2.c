@@ -34,8 +34,31 @@ int main(){
 
     int status;
 
-    pid_t cpid1,cpid2,cpid3,cpid4,cpid5,cpid6,cpid7,cpid8;
+    pid_t cpid,cpid1,cpid2,cpid3,cpid4,cpid5,cpid6,cpid7,cpid8;
+
+    cpid = fork();
+    if (cpid < 0)
+        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+
+    if (cpid == 0) {
+        char *arg2a[] = {"wget", "https://drive.google.com/uc?id=1g5rehatLEkqvuuK_eooHJXB57EfdnxVD&export=download", "-O", "/home/allam/Downloads/pets.zip", NULL};
+        execv("/bin/wget", arg2a);
+        exit(EXIT_SUCCESS);
+    }
+
+    while ((wait(&status)) > 0);
+    cpid = fork();
+    if (cpid < 0)
+        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+
+    if (cpid == 0) {
+        char *arg2a[] = {"mv", "/home/allam/Downloads/pets.zip", "/home/allam/pets.zip", NULL};
+        execv("/bin/mv", arg2a);
+        exit(EXIT_SUCCESS);
+    }
+
     //2a====================cpid1,cpid2
+    while ((wait(&status)) > 0);
     cpid1 = fork();
     if (cpid1 < 0)
         exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
@@ -170,7 +193,7 @@ int main(){
             if (cpid8 < 0)
                 exit(1);
             if ( cpid8 == 0){
-                
+
                 pid_t pid, sid;
                 pid = fork();
                 if (pid < 0) {
