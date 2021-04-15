@@ -55,6 +55,8 @@ int main(){
     if (cpid2 == 0){
         char *argv[] = {"unzip", zip_file, "-d", target_loc, "-x", "*/*", NULL};
         execv("/bin/unzip", argv);
+        while ((wait(&status)) > 0);
+        printf("2a selesai\n");
         exit(EXIT_SUCCESS);
     }
 
@@ -76,6 +78,8 @@ int main(){
                 exit(0);
             }
         }
+        while ((wait(&status)) > 0);
+        printf("2b selesai\n");
         exit(EXIT_SUCCESS);
     }
 
@@ -143,17 +147,13 @@ int main(){
         }
 
         while ((wait(&status)) > 0);
+        printf("2c 2d selesai\n");
+        //breakpoint 2c 2d================================
+
+        while ((wait(&status)) > 0);
         FILE *output;
         listFolder(target_loc);
-        // for(int j=0; j<list_files; j++){
-        //     printf("kind\t: %s\n", kind[j]);
-        //     printf("nama\t: %s\n", name[j]);
-        //     printf("umur\t: %s\b tahun\n", age[j]);
-        //     printf("\n");
-        // }
         for(int i=0; i<list_folders; i++){
-            // printf("%s\n", folders[i]);
-            
             while ((wait(&status)) > 0);
             cpid8 = fork();
             if (cpid8 < 0)
@@ -170,34 +170,26 @@ int main(){
             if (cpid8 < 0)
                 exit(1);
             if ( cpid8 == 0){
-                pid_t pid, sid;        // Variabel untuk menyimpan PID
-
-                pid = fork();     // Menyimpan PID dari Child Process
-
-                /* Keluar saat fork gagal
-                * (nilai variabel pid < 0) */
+                
+                pid_t pid, sid;
+                pid = fork();
                 if (pid < 0) {
                     exit(EXIT_FAILURE);
                 }
-
-                /* Keluar saat fork berhasil
-                * (nilai variabel pid adalah PID dari child process) */
                 if (pid > 0) {
                     exit(EXIT_SUCCESS);
                 }
-
                 umask(0);
-
                 sid = setsid();
                 if (sid < 0) {
                     exit(EXIT_FAILURE);
                 }
-
                 if ((chdir("/")) < 0) {
                     exit(EXIT_FAILURE);
                 }
+
                 sprintf(dest, "%s/%s/keterangan.txt", target_loc, folders[i]);
-                printf("%s\n", dest);
+                // printf("%s\n", dest);
                 output = fopen(dest, "w+");
                 umask(0);
                 for(int j=0; j<list_files; j++){
@@ -211,19 +203,10 @@ int main(){
             }
             
         }
-
+        while ((wait(&status)) > 0);
+        printf("2e selesai\n");
         exit(EXIT_SUCCESS);
     }
-    
-    // //2e
-    // while ((wait(&status)) > 0);
-    // cpid7 = fork();
-    // if (cpid7 < 0)
-    //     exit(EXIT_FAILURE);
-
-    // if(cpid7 == 0){
-        
-    // }
 }
 
 void listFilesRecursively(char *basePath)
