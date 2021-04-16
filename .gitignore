@@ -62,9 +62,5 @@ Temporary Items
 *.txt
 *tes*
 
-soal3/soal3
-soal3/coba*
-soal3/.vscode
-soal3/wait*
-soal3/*.zip
-soal3/*/
+soal3/*
+!soal3/soal3.c
