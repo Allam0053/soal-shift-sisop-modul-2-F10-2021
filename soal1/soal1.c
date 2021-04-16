@@ -13,7 +13,7 @@ int main()
   
   pid_t pid, sid;
   
-  
+  //Jam 4 sore
   pid = fork();
   if(pid < 0)
     exit(EXIT_FAILURE);
@@ -91,7 +91,26 @@ while((wait(&status)) > 0);
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
-    char *arg9[] = {"mv", "/home/dewangga99/FILM", "/home/dewangga99/Fylm NULL};
+    char *arg9[] = {"mv", "/home/dewangga99/FILM", "/home/dewangga99/Fylm", NULL};
     execv("/bin/mv", arg9);
+  }
+  //Akhir jam 4 sore
+  
+  //Jam 10
+  while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg10[] = {"zip", "-r", "Lopyu_Stevany.zip", "/home/dewangga99/Pyoto", "/home/dewangga99/Myusik", "/home/dewangga99/Fylm", NULL};
+    execv("/bin/zip", arg10);
+  }
+  while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg11[] = {"rm", "-r", "/home/dewangga99/Pyoto", "/home/dewangga99/Myusik", "/home/dewangga99/Fylm", NULL};
+    execv("/bin/rm", arg11);
   }
 }
