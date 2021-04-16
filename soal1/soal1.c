@@ -7,11 +7,52 @@
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <time.h>
 
 int main()
 {
-  pid_t pid, sid;
-  pid = fork();
+  
+  /*time_t rawtime = time(NULL);
+  struct tm timeinfo = *localtime(&rawtime);
+  int i = 0;
+  while(i < 100)
+  {
+  	timeinfo = *localtime(&rawtime);
+  	printf ( "%d\n", timeinfo.tm_sec);
+  	i++;
+  }*/
+  
+  pid_t sid, sid1;
+  
+  sid = fork();
+  if(sid < 0)
+    exit(EXIT_FAILURE);
+  if(sid > 0)
+    exit(EXIT_SUCCESS);
+  
+  umask(0);
+  sid1 = setsid();
+  if(sid1 < 0)
+    exit(EXIT_FAILURE);
+  if(chdir("/home/dewangga99") < 0)
+    exit(EXIT_FAILURE);
+  
+  close(STDIN_FILENO);
+  close(STDOUT_FILENO);
+  close(STDERR_FILENO);
+  
+  while(1){
+    //fill the rest here
+    //Jam 4 sore
+    time_t rawtime = time(NULL);
+  struct tm timeinfo = *localtime(&rawtime);
+    
+    if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 16 && timeingo.tm_min == 22)
+    {
+      //Buat jam 4
+    }
+    //Mungkin dikomen bagian EXIT_FAILURE-nya
+  pid_t pid = fork();
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
@@ -42,5 +83,83 @@ int main()
     //https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
     execv("/bin/wget", arg3);
   }
-
+while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg4[] = {"unzip", "Foto.zip", NULL};
+    execv("/bin/unzip", arg4);
+  }
+ while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg5[] = {"unzip", "Musik.zip", NULL};
+    execv("/bin/unzip", arg5);
+  }
+ while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg6[] = {"unzip", "Film.zip", NULL};
+    execv("/bin/unzip", arg6);
+  }
+ 
+  while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg7[] = {"mv", "/home/dewangga99/FOTO", "/home/dewangga99/Pyoto", NULL};
+    execv("/bin/mv", arg7);
+  }
+  while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg8[] = {"mv", "/home/dewangga99/MUSIK", "/home/dewangga99/Myusik", NULL};
+    execv("/bin/mv", arg8);
+  }
+  while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg9[] = {"mv", "/home/dewangga99/FILM", "/home/dewangga99/Fylm", NULL};
+    execv("/bin/mv", arg9);
+  }
+  //Akhir jam 4 sore
+  
+    time_t rawtime2 = time(NULL);
+  struct tm timeinfo2 = *localtime(&rawtime2);
+    if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 22 && timeingo.tm_min == 22)
+    {
+      //Buat jam 10
+    }
+    
+  //Jam 10
+  while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg10[] = {"zip", "-r", "Lopyu_Stevany.zip", "/home/dewangga99/Pyoto", "/home/dewangga99/Myusik", "/home/dewangga99/Fylm", NULL};
+    execv("/bin/zip", arg10);
+  }
+  while((wait(&status)) > 0);
+  pid = fork();
+  if(pid < 0)
+    exit(EXIT_FAILURE);
+  if(pid == 0){
+    char *arg11[] = {"rm", "-r", "/home/dewangga99/Pyoto", "/home/dewangga99/Myusik", "/home/dewangga99/Fylm", NULL};
+    execv("/bin/rm", arg11);
+  }
+    sleep(3600 * 6);
+  }
+  
+  
 }
