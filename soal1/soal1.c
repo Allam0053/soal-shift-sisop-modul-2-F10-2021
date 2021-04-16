@@ -12,6 +12,16 @@
 int main()
 {
   
+  /*time_t rawtime = time(NULL);
+  struct tm timeinfo = *localtime(&rawtime);
+  int i = 0;
+  while(i < 100)
+  {
+  	timeinfo = *localtime(&rawtime);
+  	printf ( "%d\n", timeinfo.tm_sec);
+  	i++;
+  }*/
+  
   pid_t sid, sid1;
   
   sid = fork();
@@ -34,6 +44,13 @@ int main()
   while(1){
     //fill the rest here
     //Jam 4 sore
+    time_t rawtime = time(NULL);
+  struct tm timeinfo = *localtime(&rawtime);
+    
+    if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 16 && timeingo.tm_min == 22)
+    {
+      //Buat jam 4
+    }
     //Mungkin dikomen bagian EXIT_FAILURE-nya
   pid_t pid = fork();
   if(pid < 0)
@@ -117,6 +134,13 @@ while((wait(&status)) > 0);
   }
   //Akhir jam 4 sore
   
+    time_t rawtime2 = time(NULL);
+  struct tm timeinfo2 = *localtime(&rawtime2);
+    if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 22 && timeingo.tm_min == 22)
+    {
+      //Buat jam 10
+    }
+    
   //Jam 10
   while((wait(&status)) > 0);
   pid = fork();
