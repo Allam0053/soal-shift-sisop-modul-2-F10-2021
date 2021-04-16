@@ -160,7 +160,7 @@ while(wait(NULL) > 0);
     }
     
   
-    sleep(3600 * 6);
+    sleep(1);
   }
   
   
