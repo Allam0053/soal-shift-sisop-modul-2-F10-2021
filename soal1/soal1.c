@@ -7,11 +7,35 @@
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <time.h>
 
 int main()
 {
   
-  pid_t pid, sid;
+  pid_t pid, sid, sid1;
+  
+  sid = fork();
+  if(sid < 0)
+    exit(EXIT_FAILURE);
+  if(sid > 0)
+    exit(EXIT_SUCCESS);
+  
+  umask(0);
+  sid1 = setsid();
+  if(sid1 < 0)
+    exit(EXIT_FAILURE);
+  if(chdir("/home/dewangga99") < 0)
+    exit(EXIT_FAILURE);
+  
+  close(STDIN_FILENO);
+  close(STDOUT_FILENO);
+  close(STDERR_FILENO);
+  
+  while(1){
+    //fill the rest here
+    
+    sleep(3600 * 6);
+  }
   
   //Jam 4 sore
   pid = fork();
