@@ -1,7 +1,8 @@
-#include <stdio.h>
-#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
+#include <stdio.h>
+#include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -31,7 +32,7 @@ int main() {
   
   while (1) {
     pid_t pid_create_dir = fork();
-    char dir_timestamp[20];
+    char dir_timestamp[20] = "";
     get_timestamp(dir_timestamp);
 
     if (pid_create_dir == 0) {
@@ -39,7 +40,11 @@ int main() {
       execv("/bin/mkdir", argv);
     }
 
-    while (wait(NULL) > 0);
+    int status;
+    int end_id;
+    do {
+      end_id = waitpid(pid_create_dir, &status, WNOHANG|WUNTRACED);
+    } while (end_id == 0);
 
     /* Pembuatan folder telah selesai */
 
@@ -48,17 +53,15 @@ int main() {
     if (pid_download_pictures == 0) {
       // ? Apakah perlu copy timestamp ?
       int downloaded_pictures = 0;
-      char this_timestamp[20];
-      strcpy(this_timestamp, dir_timestamp);
 
       while (downloaded_pictures++ < 10) {
         pid_t pid_for_download = fork();
 
         if (pid_for_download == 0) {
-          char pic_timestamp[20];
+          char pic_timestamp[20] = "";
           int time = (int) get_timestamp(pic_timestamp);
           int size = 50 + (time % 1000);
-          char pic_path_dest[100];
+          char pic_path_dest[100] = "";
           char url[27];
 
           strcat(pic_path_dest, dir_timestamp);
@@ -69,7 +72,7 @@ int main() {
           sprintf(url, "https://picsum.photos/%d", size);
 
           // ! Path wget harus diubah
-          char* argv[] = { "wget", "-O", pic_path_dest, url, NULL };
+          char* argv[] = { "wget", "-q", "-O", pic_path_dest, url, NULL };
           execv("/usr/local/bin/wget", argv);
         }
 
@@ -98,7 +101,7 @@ int main() {
         strcat(zip_name, dir_timestamp);
         strcat(zip_name, ".zip");
 
-        char* argv[] = { "zip", "-r", zip_name, dir_timestamp, NULL };
+        char* argv[] = { "zip", "-qq", "-r", zip_name, dir_timestamp, NULL };
         execv("/usr/bin/zip", argv);
       }
 
@@ -108,7 +111,7 @@ int main() {
       // remove folder
       char* argv[] = { "rm", "-r", dir_timestamp, NULL };
       execv("/bin/rm", argv);
-      // exit(EXIT_SUCCESS);
+      //// exit(EXIT_SUCCESS);
     }
 
     /* Dibawah sini gak boleh ada wait (kalo ada wait, berarti dia nunggu si download. jadinya 90 detik) */
@@ -121,10 +124,10 @@ int main() {
 
 long get_timestamp(char time_stamp[]) {
   time_t rawtime = time(NULL);
-  if (rawtime == -1) return;
+  if (rawtime == -1) return -1;
 
   struct tm* ptm = localtime(&rawtime);
-  if (!ptm) return;
+  if (!ptm) return -1;
 
   char temp[5];
 
