@@ -50,8 +50,7 @@ int main()
     if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 16 && timeingo.tm_min == 22)
     {
       //Buat jam 4
-    }
-    //Mungkin dikomen bagian EXIT_FAILURE-nya
+      //Mungkin dikomen bagian EXIT_FAILURE-nya
   pid_t pid = fork();
   if(pid < 0)
     exit(EXIT_FAILURE);
@@ -133,15 +132,14 @@ while((wait(&status)) > 0);
     execv("/bin/mv", arg9);
   }
   //Akhir jam 4 sore
-  
-    time_t rawtime2 = time(NULL);
-  struct tm timeinfo2 = *localtime(&rawtime2);
-    if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 22 && timeingo.tm_min == 22)
-    {
-      //Buat jam 10
     }
     
-  //Jam 10
+  
+    
+    else if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 22 && timeingo.tm_min == 22)
+    {
+      //Buat jam 10
+      //Jam 10
   while((wait(&status)) > 0);
   pid = fork();
   if(pid < 0)
@@ -158,6 +156,9 @@ while((wait(&status)) > 0);
     char *arg11[] = {"rm", "-r", "/home/dewangga99/Pyoto", "/home/dewangga99/Myusik", "/home/dewangga99/Fylm", NULL};
     execv("/bin/rm", arg11);
   }
+    }
+    
+  
     sleep(3600 * 6);
   }
   
