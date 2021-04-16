@@ -5,8 +5,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 
 long get_timestamp(char time_stamp[]);
+void caesar_encrypt(char str[]);
 
 int main() {
   pid_t pid = fork();
@@ -19,6 +21,7 @@ int main() {
   umask(0);
   pid_t sid = setsid();
 
+  // ! chdir() harus dihapus
   if (sid < 0) exit(EXIT_FAILURE);
   if (chdir("/Users/riza/Documents/A-Kuliah/6-Sistem-Operasi/Praktikum/soal-shift-sisop-modul-2-F10-2021/soal3") < 0) exit(EXIT_FAILURE);
 
@@ -62,14 +65,45 @@ int main() {
 
           sprintf(url, "https://picsum.photos/%d", size);
 
-          char* argv[] = { "wget", "-O", pic_path_dest, url };
           // ! Path wget harus diubah
+          char* argv[] = { "wget", "-O", pic_path_dest, url, NULL };
           execv("/usr/local/bin/wget", argv);
         }
 
         sleep(5);
       }
 
+      /* Abis download => buat status.txt & zip si folder & hapus folder */
+
+      // Buat status.txt + isi pesan
+      char message[20] = "Download Success";
+      caesar_encrypt(message);
+
+      char file_message_name[100] = "./";
+      strcat(file_message_name, dir_timestamp);
+      strcat(file_message_name, "/status.txt");
+
+      FILE* fp = fopen(file_message_name, "w+");
+      fputs(message, fp);
+      fclose(fp);
+
+      // zip si folder
+      pid_t pid_for_zip = fork();
+
+      if (pid_for_zip == 0) {
+        char zip_name[50];
+        strcat(zip_name, dir_timestamp);
+        strcat(zip_name, ".zip");
+
+        char* argv[] = { "zip", "-r", zip_name, dir_timestamp, NULL };
+        execv("/usr/bin/zip", argv);
+      }
+
+      // remove folder
+      char* argv[] = { "rm", "-r", dir_timestamp, NULL };
+      execv("/bin/rm", argv);
+
+      // exit(EXIT_SUCCESS);
     }
 
     /* Dibawah sini gak boleh ada wait (kalo ada wait, berarti dia nunggu si download. jadinya 90 detik) */
@@ -115,4 +149,13 @@ long get_timestamp(char time_stamp[]) {
   strcat(time_stamp, temp);
 
   return rawtime;
+}
+
+void caesar_encrypt(char str[]) {
+  const int SHIFT = 5;
+  for (int i = 0; i < strlen(str); i++) {
+    if (!isalpha(str[i])) continue;
+    if (isupper(str[i])) str[i] = (str[i] + SHIFT - 65) % 26 + 65;
+    else str[i] = (str[i] + SHIFT - 97) % 26 + 97;
+  }
 }
