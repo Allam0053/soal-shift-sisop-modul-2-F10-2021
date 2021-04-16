@@ -7,11 +7,27 @@
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
+#include <signal.h>
+
+int signal_proccess = 1;
 
 long get_timestamp(char time_stamp[]);
 void caesar_encrypt(char str[]);
+void create_kill_file(char mode);
+void stop_process();
 
-int main() {
+int main(int argc, char* args[]) {
+  if (argc != 2) {
+    printf("Please input argument\n");
+    return EXIT_FAILURE;
+  }
+
+  if (strcmp(args[1], "-z") == 0) create_kill_file('z');
+  else if (strcmp(args[1], "-x") == 0) {
+    create_kill_file('x');
+    signal(SIGTERM, stop_process);
+  }
+
   pid_t pid = fork();
 
   if (pid < 0) exit(EXIT_FAILURE);
@@ -30,7 +46,7 @@ int main() {
   close(STDOUT_FILENO);
   close(STDERR_FILENO);
   
-  while (1) {
+  while (signal_proccess) {
     pid_t pid_create_dir = fork();
     char dir_timestamp[20] = "";
     get_timestamp(dir_timestamp);
@@ -166,4 +182,29 @@ void caesar_encrypt(char str[]) {
     if (isupper(str[i])) str[i] = (str[i] + SHIFT - 65) % 26 + 65;
     else str[i] = (str[i] + SHIFT - 97) % 26 + 97;
   }
+}
+
+
+void create_kill_file(char mode) {
+  FILE* fp = fopen("./kill-soal3.sh", "w");
+
+  switch (mode) {
+    case 'z':
+      
+      fprintf(fp, "#!/bin/bash\nfor pid in $(ps -ef | awk '/soal3/ {print $2}'); do kill -9 $pid; done");
+      break;
+    
+    case 'x':
+      fprintf(fp, "#!/bin/bash\nfor pid in $(ps -ef | awk '/soal3/ {print $2}'); do kill -15 $pid; done");
+      break;
+
+    default:
+      break;
+  }
+
+  fclose(fp);
+}
+
+void stop_process() {
+  signal_proccess = 0;
 }
