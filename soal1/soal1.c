@@ -12,7 +12,7 @@
 int main()
 {
   
-  pid_t pid, sid, sid1;
+  pid_t sid, sid1;
   
   sid = fork();
   if(sid < 0)
@@ -33,12 +33,9 @@ int main()
   
   while(1){
     //fill the rest here
-    
-    sleep(3600 * 6);
-  }
-  
-  //Jam 4 sore
-  pid = fork();
+    //Jam 4 sore
+    //Mungkin dikomen bagian EXIT_FAILURE-nya
+  pid_t pid = fork();
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
@@ -137,4 +134,8 @@ while((wait(&status)) > 0);
     char *arg11[] = {"rm", "-r", "/home/dewangga99/Pyoto", "/home/dewangga99/Myusik", "/home/dewangga99/Fylm", NULL};
     execv("/bin/rm", arg11);
   }
+    sleep(3600 * 6);
+  }
+  
+  
 }
