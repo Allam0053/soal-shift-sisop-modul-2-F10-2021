@@ -10,9 +10,12 @@
 #include <stdbool.h>
 #include <fcntl.h>
 
+#define tunggu while ((wait(&status)) > 0);
+
 void listFilesRecursively(char *path);
 void listFiles(char *basePath);
 void listFolder(char *basePath);
+
 char makedir[100][100];
 int list_dir=0;
 char files[100][100];
@@ -37,219 +40,195 @@ int main(){
     pid_t cpid,cpid1,cpid2,cpid3,cpid4,cpid5,cpid6,cpid7,cpid8;
 
     cpid = fork();
-    if (cpid < 0)
-        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
-
+    if (cpid < 0) exit(EXIT_FAILURE);
     if (cpid == 0) {
         char *arg2a[] = {"wget", "https://drive.google.com/uc?id=1g5rehatLEkqvuuK_eooHJXB57EfdnxVD&export=download", "-O", "/home/allam/Downloads/pets.zip", NULL};
         execv("/bin/wget", arg2a);
         exit(EXIT_SUCCESS);
     }
 
-    while ((wait(&status)) > 0);
-    cpid = fork();
-    if (cpid < 0)
-        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+    tunggu
 
+    cpid = fork();
+    if (cpid < 0) exit(EXIT_FAILURE);
     if (cpid == 0) {
-        char *arg2a[] = {"mv", "/home/allam/Downloads/pets.zip", "/home/allam/pets.zip", NULL};
+        char source[] = "/home/allam/Downloads/pets.zip";
+        char dest__[] = "/home/allam/pets.zip";
+        char *arg2a[] = {"mv", source, dest__, NULL};
         execv("/bin/mv", arg2a);
         exit(EXIT_SUCCESS);
     }
 
-    //2a====================cpid1,cpid2
-    while ((wait(&status)) > 0);
-    cpid1 = fork();
-    if (cpid1 < 0)
-        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+    tunggu
 
+    //2a====================cpid1,cpid2
+    cpid1 = fork();
+    if (cpid1 < 0) exit(EXIT_FAILURE);
     if (cpid1 == 0) {
         char *arg2a[] = {"mkdir", "-p", target_loc, NULL};
         execv("/bin/mkdir", arg2a);
         exit(EXIT_SUCCESS);
     }
 
+    tunggu
 
-    while ((wait(&status)) > 0);
     cpid2 = fork();
-    if (cpid2 < 0)
-        exit(EXIT_FAILURE);
-    
+    if (cpid2 < 0) exit(EXIT_FAILURE);
     if (cpid2 == 0){
         char *argv[] = {"unzip", zip_file, "-d", target_loc, "-x", "*/*", NULL};
         execv("/bin/unzip", argv);
-        while ((wait(&status)) > 0);
+        tunggu
         printf("2a selesai\n");
         exit(EXIT_SUCCESS);
     }
 
+    tunggu
+
     //2b====================cpid3,cpid4
-    while ((wait(&status)) > 0);
     cpid3 = fork();
-    if (cpid3 < 0)
-        exit(EXIT_FAILURE);
+    if (cpid3 < 0) exit(EXIT_FAILURE);
     
-    if (cpid3 == 0){
+    if (cpid3 == 0) {
         listFilesRecursively("/home/allam/modul2/petshop");
-        for (int i=0; i<list_dir; i++){
+        for (int i=0; i<list_dir; i++) {
             cpid4 = fork();
-            if (cpid4 < 0)
-                exit(1);
-            if ( cpid4 == 0){
+            if (cpid4 < 0) exit(1);
+            if ( cpid4 == 0) {
                 char *argv[] = {"mkdir", "-p", makedir[i], NULL};
                 execv("/bin/mkdir", argv);
                 exit(0);
             }
         }
-        while ((wait(&status)) > 0);
+        tunggu
         printf("2b selesai\n");
         exit(EXIT_SUCCESS);
     }
 
+    tunggu
+
     //2c
-    while ((wait(&status)) > 0);
     cpid5 = fork();
-    if (cpid5 < 0)
-        exit(EXIT_FAILURE);
-    
+    if (cpid5 < 0) exit(EXIT_FAILURE);
     if (cpid5 == 0){
         listFiles("/home/allam/modul2/petshop");
         char temp[100];
-        char source[200], dest[200];
+        char source[200], dest__[200];
         char under[]="_";
         char jpg[]=".jpg";
-        for(int i=0; i<list_files; i++){
-            // printf("%s\n", files[i]);
 
+        for (int i=0; i<list_files; i++) {
+            sprintf(source, "%s/%s", target_loc, files[i]);
             strcpy(temp, files[i]);
             strcpy(kind[i], strtok(temp,";"));
             strcpy(name[i], strtok(NULL,";"));
             strcpy(age[i], strtok(NULL,"j"));
             age[i][strlen(age[i])-1] = '\0';
 
-            sprintf(source, "%s/%s", target_loc, files[i]);
             if(strstr(files[i], jpg)==NULL){ //if 1 poto ada 2 hewan: duplicate, namai poto dg 1 hewan
-                while ((wait(&status)) > 0);
+                tunggu
+
                 cpid6 = fork();
-                if (cpid6 < 0)
-                    exit(1);
-                if ( cpid6 == 0){
+                if (cpid6 < 0) exit(1);
+                if (cpid6 == 0) {
                     sprintf(source, "%s/%s%s%s", target_loc, files[i], under, files[i+1]);
-                    sprintf(dest, "%s/%s.jpg", target_loc, files[i]);
-                    char *argv[] = {"cp", source, dest, NULL};
+                    sprintf(dest__, "%s/%s.jpg", target_loc, files[i]);
+                    char *argv[] = {"cp", source, dest__, NULL};
                     execv("/bin/cp", argv);
                     exit(0);
                 }
 
-                while ((wait(&status)) > 0);
+                tunggu
+
                 cpid6 = fork();
-                if (cpid6 < 0)
-                    exit(1);
-                if ( cpid6 == 0){
+                if (cpid6 < 0) exit(1);
+                if (cpid6 == 0) {
                     sprintf(source, "%s/%s%s%s", target_loc, files[i], under, files[i+1]);
-                    sprintf(dest, "%s/%s", target_loc, files[i+1]);
-                    char *argv[] = {"mv", source, dest, NULL};
+                    sprintf(dest__, "%s/%s", target_loc, files[i+1]);
+                    char *argv[] = {"mv", source, dest__, NULL};
                     execv("/bin/mv", argv);
                     exit(0);
                 }
 
                 strcat(files[i],".jpg");            
             }
-            while ((wait(&status)) > 0);
+
+            tunggu
+
             cpid6 = fork();
-            if (cpid6 < 0)
-                exit(1);
-            if ( cpid6 == 0){
+            if (cpid6 < 0) exit(1);
+            if (cpid6 == 0) {
                 sprintf(source, "%s/%s", target_loc, files[i]);
-                sprintf(dest, "%s/%s/%s.jpg", target_loc, kind[i], name[i]);
-                char *argv[] = {"mv", source, dest, NULL};
+                sprintf(dest__, "%s/%s/%s.jpg", target_loc, kind[i], name[i]);
+                char *argv[] = {"mv", source, dest__, NULL};
                 execv("/bin/mv", argv);
                 exit(0);
             }
-
         }
 
-        while ((wait(&status)) > 0);
+        tunggu
         printf("2c 2d selesai\n");
         //breakpoint 2c 2d================================
 
-        while ((wait(&status)) > 0);
         FILE *output;
         listFolder(target_loc);
-        for(int i=0; i<list_folders; i++){
-            while ((wait(&status)) > 0);
+
+        for(int i=0; i<list_folders; i++) {
+            tunggu
             cpid8 = fork();
-            if (cpid8 < 0)
-                exit(1);
-            if ( cpid8 == 0){
-                sprintf(dest, "%s/%s/keterangan.txt", target_loc, folders[i]);
-                char *argv[] = {"touch", dest, NULL};
+            if (cpid8 < 0) exit(1);
+            if (cpid8 == 0) {
+                sprintf(dest__, "%s/%s/keterangan.txt", target_loc, folders[i]);
+                char *argv[] = {"touch", dest__, NULL};
                 execv("/bin/touch", argv);
                 exit(0);
             }
 
-            while ((wait(&status)) > 0);
-            cpid8 = fork();
-            if (cpid8 < 0)
-                exit(1);
-            if ( cpid8 == 0){
+            tunggu
 
+            cpid8 = fork();
+            if (cpid8 < 0) exit(1);
+            if (cpid8 == 0) {
                 pid_t pid, sid;
+
                 pid = fork();
-                if (pid < 0) {
-                    exit(EXIT_FAILURE);
-                }
-                if (pid > 0) {
-                    exit(EXIT_SUCCESS);
-                }
+                if (pid < 0) exit(EXIT_FAILURE);
+                if (pid > 0) exit(EXIT_SUCCESS);
                 umask(0);
                 sid = setsid();
-                if (sid < 0) {
-                    exit(EXIT_FAILURE);
-                }
-                if ((chdir("/")) < 0) {
-                    exit(EXIT_FAILURE);
-                }
+                if (sid < 0) exit(EXIT_FAILURE);
+                if ((chdir("/")) < 0) exit(EXIT_FAILURE);
 
-                sprintf(dest, "%s/%s/keterangan.txt", target_loc, folders[i]);
-                // printf("%s\n", dest);
-                output = fopen(dest, "w+");
+                sprintf(dest__, "%s/%s/keterangan.txt", target_loc, folders[i]);
+                output = fopen(dest__, "w+");
                 umask(0);
-                for(int j=0; j<list_files; j++){
-                    if( strcmp(folders[i], kind[j])==0 ){
+                for(int j=0; j<list_files; j++) {
+                    if( strcmp(folders[i], kind[j])==0 ) {
                         fprintf(output, "nama : %s\n", name[j]);
                         fprintf(output, "umur : %s tahun\n\n", age[j]);
                     }
                 }
                 fclose(output);
+
                 exit(0);
             }
-            
         }
-        while ((wait(&status)) > 0);
+        tunggu
         printf("2e selesai\n");
         exit(EXIT_SUCCESS);
     }
 }
 
-void listFilesRecursively(char *basePath)
-{
+void listFilesRecursively(char *basePath) {
     char path[1000];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
 
-    if (!dir)
-        return;
+    if (!dir) return;
 
-    while ((dp = readdir(dir)) != NULL)
-    {
-        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
-        {
-            // printf("%s\n", dp->d_name);
-            // strcpy(makedir[list_dir++], strtok(dp->d_name, ";") );
+    while ((dp = readdir(dir)) != NULL) {
+        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0) {
             sprintf(makedir[list_dir++], "%s/%s", basePath, strtok(dp->d_name, ";"));
             
-            // Construct new path from our base path
             strcpy(path, basePath);
             strcat(path, "/");
             strcat(path, dp->d_name);
@@ -257,57 +236,46 @@ void listFilesRecursively(char *basePath)
             listFilesRecursively(path);
         }
     }
-
     closedir(dir);
 }
 
-void listFiles(char *basePath)
-{
+void listFiles(char *basePath) {
     char path[1000];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
     char *token;
 
-    if (!dir)
-        return;
+    if (!dir) return;
 
-    while ((dp = readdir(dir)) != NULL)
-    {
-        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0 && (strstr(dp->d_name, ".") != NULL))//check if it's not folder
-        {
+    while ((dp = readdir(dir)) != NULL) {
+        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0 && (strstr(dp->d_name, ".") != NULL)){ //check if it's not folder 
+
             const char s[2] = "_";
             token = strtok(dp->d_name, s);
             strcpy(files[list_files++],token);
-            // printf("%s\n", files[list_files-1]);
             token = strtok(NULL, s);
             
             while( token != NULL ) {
                 strcpy(files[list_files++],token);
-                // printf("%s\n", files[list_files-1]);
                 token = strtok(NULL, s);
             }
         }
     }
-
     closedir(dir);
 }
 
-void listFolder(char *basePath)
-{
+void listFolder(char *basePath) {
     char path[1000];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
     char *token;
 
-    if (!dir)
-        return;
+    if (!dir) return;
 
-    while ((dp = readdir(dir)) != NULL)
-    {
-        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0){//check folder
+    while ((dp = readdir(dir)) != NULL) {
+        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0) {//check folder
             strcpy(folders[list_folders++],dp->d_name);
         }
     }
-
     closedir(dir);
 }
