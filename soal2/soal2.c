@@ -15,15 +15,16 @@
 void listFilesRecursively(char *path);
 void listFiles(char *basePath);
 void listFolder(char *basePath);
+void util(pid_t *cpid, char *arg, char **argv);
 
-char makedir[100][100];
+char makedir[100][100]; //berisi folder yang harus dibuat ex.: cat, dog. NOTE: not distinct value
 int list_dir=0;
-char files[100][100];
+char files[100][100];   //berisi files / foto. per hewan disimpan di string yg berbeda
 int list_files=0;
-char folders[100][100];
+char folders[100][100]; //berisi folder yang harus dibuat ex.: cat, dog. NOTE: distinct value
 int list_folders=0;
 
-char kind[100][100];
+char kind[100][100];    //keterangan jenis, nama, umur hewan tersimpan di sini.
 char name[100][100];
 char age[100][100];
 
@@ -35,52 +36,39 @@ int main(){
     char folder_name[50]="/modul2/petshop";
     sprintf(target_loc, "%s%s", "/home/allam", folder_name); // = "/home/allam/modul2/petshop";
 
+    char *mkdir[] = {"/bin/mkdir", "mkdir"};
+    char *wget_[] = {"/bin/wget", "wget"};
+    char *mv___[] = {"/bin/mv", "mv"};
+    char *cp___[] = {"/bin/cp", "cp"};
+    char *unzip[] = {"/bin/unzip", "unzip"};
+    char *touch[] = {"/bin/touch", "touch"};
+
     int status;
 
     pid_t cpid,cpid1,cpid2,cpid3,cpid4,cpid5,cpid6,cpid7,cpid8;
 
-    cpid = fork();
-    if (cpid < 0) exit(EXIT_FAILURE);
-    if (cpid == 0) {
-        char *arg2a[] = {"wget", "https://drive.google.com/uc?id=1g5rehatLEkqvuuK_eooHJXB57EfdnxVD&export=download", "-O", "/home/allam/Downloads/pets.zip", NULL};
-        execv("/bin/wget", arg2a);
-        exit(EXIT_SUCCESS);
-    }
+    char link[] = "https://drive.google.com/uc?id=1g5rehatLEkqvuuK_eooHJXB57EfdnxVD&export=download";
+    char dir_[] = "/home/allam/Downloads/pets.zip";
+    char *arg_init0[] = {wget_[1], link, "-O", dir_, NULL};
+    util (&cpid, wget_[0], arg_init0);
 
     tunggu
 
-    cpid = fork();
-    if (cpid < 0) exit(EXIT_FAILURE);
-    if (cpid == 0) {
-        char source[] = "/home/allam/Downloads/pets.zip";
-        char dest__[] = "/home/allam/pets.zip";
-        char *arg2a[] = {"mv", source, dest__, NULL};
-        execv("/bin/mv", arg2a);
-        exit(EXIT_SUCCESS);
-    }
+    char source[] = "/home/allam/Downloads/pets.zip";
+    char dest__[] = "/home/allam/pets.zip";
+    char *arg_init1[] = {mv___[1], source, dest__, NULL};
+    util (&cpid, mv___[0], arg_init1);
 
     tunggu
 
     //2a====================cpid1,cpid2
-    cpid1 = fork();
-    if (cpid1 < 0) exit(EXIT_FAILURE);
-    if (cpid1 == 0) {
-        char *arg2a[] = {"mkdir", "-p", target_loc, NULL};
-        execv("/bin/mkdir", arg2a);
-        exit(EXIT_SUCCESS);
-    }
+    char *arg_2a[] = {mkdir[1], "-p", target_loc, NULL};
+    util (&cpid1, mkdir[0], arg_2a);
 
     tunggu
 
-    cpid2 = fork();
-    if (cpid2 < 0) exit(EXIT_FAILURE);
-    if (cpid2 == 0){
-        char *argv[] = {"unzip", zip_file, "-d", target_loc, "-x", "*/*", NULL};
-        execv("/bin/unzip", argv);
-        tunggu
-        printf("2a selesai\n");
-        exit(EXIT_SUCCESS);
-    }
+    char *arg_2a1[] = {unzip[1], zip_file, "-d", target_loc, "-x", "*/*", NULL};
+    util (&cpid2, unzip[0], arg_2a1);
 
     tunggu
 
@@ -91,13 +79,8 @@ int main(){
     if (cpid3 == 0) {
         listFilesRecursively("/home/allam/modul2/petshop");
         for (int i=0; i<list_dir; i++) {
-            cpid4 = fork();
-            if (cpid4 < 0) exit(1);
-            if ( cpid4 == 0) {
-                char *argv[] = {"mkdir", "-p", makedir[i], NULL};
-                execv("/bin/mkdir", argv);
-                exit(0);
-            }
+            char *arg_2b[] = {mkdir[1], "-p", makedir[i], NULL};
+            util (&cpid4, mkdir[0], arg_2b);
         }
         tunggu
         printf("2b selesai\n");
@@ -127,42 +110,26 @@ int main(){
             if(strstr(files[i], jpg)==NULL){ //if 1 poto ada 2 hewan: duplicate, namai poto dg 1 hewan
                 tunggu
 
-                cpid6 = fork();
-                if (cpid6 < 0) exit(1);
-                if (cpid6 == 0) {
-                    sprintf(source, "%s/%s%s%s", target_loc, files[i], under, files[i+1]);
-                    sprintf(dest__, "%s/%s.jpg", target_loc, files[i]);
-                    char *argv[] = {"cp", source, dest__, NULL};
-                    execv("/bin/cp", argv);
-                    exit(0);
-                }
+                sprintf(source, "%s/%s%s%s", target_loc, files[i], under, files[i+1]);
+                sprintf(dest__, "%s/%s.jpg", target_loc, files[i]);
+                char *arg_2c[] = {cp___[1], source, dest__, NULL};
+                util (&cpid6, cp___[0], arg_2c);
 
                 tunggu
 
-                cpid6 = fork();
-                if (cpid6 < 0) exit(1);
-                if (cpid6 == 0) {
-                    sprintf(source, "%s/%s%s%s", target_loc, files[i], under, files[i+1]);
-                    sprintf(dest__, "%s/%s", target_loc, files[i+1]);
-                    char *argv[] = {"mv", source, dest__, NULL};
-                    execv("/bin/mv", argv);
-                    exit(0);
-                }
+                sprintf(source, "%s/%s%s%s", target_loc, files[i], under, files[i+1]);
+                sprintf(dest__, "%s/%s", target_loc, files[i+1]);
+                char *arg_2c1[] = {mv___[1], source, dest__, NULL};
+                util (&cpid6, mv___[0], arg_2c1);
 
                 strcat(files[i],".jpg");            
             }
-
             tunggu
 
-            cpid6 = fork();
-            if (cpid6 < 0) exit(1);
-            if (cpid6 == 0) {
-                sprintf(source, "%s/%s", target_loc, files[i]);
-                sprintf(dest__, "%s/%s/%s.jpg", target_loc, kind[i], name[i]);
-                char *argv[] = {"mv", source, dest__, NULL};
-                execv("/bin/mv", argv);
-                exit(0);
-            }
+            sprintf(source, "%s/%s", target_loc, files[i]);
+            sprintf(dest__, "%s/%s/%s.jpg", target_loc, kind[i], name[i]);
+            char *arg_2c2[] = {mv___[1], source, dest__, NULL};
+            util (&cpid6, mv___[0], arg_2c2);
         }
 
         tunggu
@@ -174,14 +141,9 @@ int main(){
 
         for(int i=0; i<list_folders; i++) {
             tunggu
-            cpid8 = fork();
-            if (cpid8 < 0) exit(1);
-            if (cpid8 == 0) {
-                sprintf(dest__, "%s/%s/keterangan.txt", target_loc, folders[i]);
-                char *argv[] = {"touch", dest__, NULL};
-                execv("/bin/touch", argv);
-                exit(0);
-            }
+            sprintf(dest__, "%s/%s/keterangan.txt", target_loc, folders[i]);
+            char *arg_2e[] = {touch[1], dest__, NULL};
+            util (&cpid8, touch[0], arg_2e);
 
             tunggu
 
@@ -218,7 +180,7 @@ int main(){
     }
 }
 
-void listFilesRecursively(char *basePath) {
+void listFilesRecursively (char *basePath) {
     char path[1000];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
@@ -239,7 +201,7 @@ void listFilesRecursively(char *basePath) {
     closedir(dir);
 }
 
-void listFiles(char *basePath) {
+void listFiles (char *basePath) {
     char path[1000];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
@@ -264,7 +226,7 @@ void listFiles(char *basePath) {
     closedir(dir);
 }
 
-void listFolder(char *basePath) {
+void listFolder (char *basePath) {
     char path[1000];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
@@ -278,4 +240,14 @@ void listFolder(char *basePath) {
         }
     }
     closedir(dir);
+}
+
+void util (pid_t *cpid, char *arg, char **argv) {
+  *cpid = fork();
+  if (*cpid < 0) exit(1);
+  if (*cpid == 0) {
+      execv(arg, argv);
+      exit(0);
+  }
+  return;
 }
