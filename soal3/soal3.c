@@ -1,32 +1,24 @@
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <signal.h>
+#include <time.h>
+#include <unistd.h>
 
 int signal_proccess = 1;
 
 long get_timestamp(char time_stamp[]);
 void caesar_encrypt(char str[]);
 void create_kill_file(char mode);
+void request_create_kill_file(char* args[]);
 void stop_process();
 
 int main(int argc, char* args[]) {
-  if (argc != 2) {
-    printf("Please input argument\n");
-    return EXIT_FAILURE;
-  }
-
-  if (strcmp(args[1], "-z") == 0) create_kill_file('z');
-  else if (strcmp(args[1], "-x") == 0) {
-    create_kill_file('x');
-    signal(SIGTERM, stop_process);
-  }
+  if (argc == 2) request_create_kill_file(args);
 
   pid_t pid = fork();
 
@@ -47,102 +39,99 @@ int main(int argc, char* args[]) {
   close(STDERR_FILENO);
   
   while (signal_proccess) {
+    const int THIS_PROCESS = 0;
+    const int PROCCESSING = 0;
+
     pid_t pid_create_dir = fork();
+
     char dir_timestamp[20] = "";
     get_timestamp(dir_timestamp);
 
-    if (pid_create_dir == 0) {
+    if (THIS_PROCESS == pid_create_dir) {
       char* argv[] = { "mkdir", "-p", dir_timestamp, NULL };
       execv("/bin/mkdir", argv);
     }
 
-    int status;
-    int end_id;
-    do {
-      end_id = waitpid(pid_create_dir, &status, WNOHANG|WUNTRACED);
-    } while (end_id == 0);
+    while(waitpid(pid_create_dir, NULL, WNOHANG | WUNTRACED) == PROCCESSING);
 
     /* Pembuatan folder telah selesai */
 
     pid_t pid_download_pictures = fork();
 
-    if (pid_download_pictures == 0) {
-      // ? Apakah perlu copy timestamp ?
-      int downloaded_pictures = 0;
-
-      while (downloaded_pictures++ < 10) {
-        pid_t pid_for_download = fork();
-
-        if (pid_for_download == 0) {
-          char pic_timestamp[20] = "";
-          int time = (int) get_timestamp(pic_timestamp);
-          int size = 50 + (time % 1000);
-          char pic_path_dest[100] = "";
-          char url[27];
-
-          strcat(pic_path_dest, dir_timestamp);
-          strcat(pic_path_dest, "/");
-          strcat(pic_path_dest, pic_timestamp);
-          strcat(pic_path_dest, ".jpg");
-
-          sprintf(url, "https://picsum.photos/%d", size);
-
-          // ! Path wget harus diubah
-          char* argv[] = { "wget", "-q", "-O", pic_path_dest, url, NULL };
-          execv("/usr/local/bin/wget", argv);
-        }
-
-        sleep(5);
-      }
-
-      /* Abis download => buat status.txt & zip si folder & hapus folder */
-
-      // Buat status.txt + isi pesan
-      char message[20] = "Download Success";
-      caesar_encrypt(message);
-
-      char file_message_name[100] = "./";
-      strcat(file_message_name, dir_timestamp);
-      strcat(file_message_name, "/status.txt");
-
-      FILE* fp = fopen(file_message_name, "w+");
-      fputs(message, fp);
-      fclose(fp);
-
-      // zip si folder
-      pid_t pid_for_zip = fork();
-
-      if (pid_for_zip == 0) {
-        char zip_name[50];
-        strcat(zip_name, dir_timestamp);
-        strcat(zip_name, ".zip");
-
-        char* argv[] = { "zip", "-qq", "-r", zip_name, dir_timestamp, NULL };
-        execv("/usr/bin/zip", argv);
-      }
-
-      // ? Apakah perlu wait untuk zip folder ?
-      while(wait(NULL) > 0);
-
-      // remove folder
-      char* argv[] = { "rm", "-r", dir_timestamp, NULL };
-      execv("/bin/rm", argv);
-      //// exit(EXIT_SUCCESS);
+    if (THIS_PROCESS != pid_download_pictures) {
+      sleep(40);
+      continue;
     }
 
-    /* Dibawah sini gak boleh ada wait (kalo ada wait, berarti dia nunggu si download. jadinya 90 detik) */
+    int downloaded_pictures = 0;
 
-    sleep(40);
+    while (downloaded_pictures++ < 10) {
+      pid_t pid_for_download = fork();
+
+      if (THIS_PROCESS == pid_for_download) {
+        char pic_timestamp[20] = "";
+        int time = (int) get_timestamp(pic_timestamp);
+        int size = 50 + (time % 1000);
+        char pic_path_dest[100] = "";
+        char url[27];
+
+        strcat(pic_path_dest, dir_timestamp);
+        strcat(pic_path_dest, "/");
+        strcat(pic_path_dest, pic_timestamp);
+        strcat(pic_path_dest, ".jpg");
+
+        sprintf(url, "https://picsum.photos/%d", size);
+
+        // ! Path wget harus diubah
+        char* argv[] = { "wget", "-q", "-O", pic_path_dest, url, NULL };
+        execv("/usr/local/bin/wget", argv);
+      }
+
+      if (downloaded_pictures == 10) break;
+      sleep(5);
+    }
+
+    /* Abis download => buat status.txt & zip si folder & remove folder */
+
+    // Buat status.txt + isi pesan
+    char message[20] = "Download Success";
+    caesar_encrypt(message);
+
+    char file_message_name[100] = "./";
+    strcat(file_message_name, dir_timestamp);
+    strcat(file_message_name, "/status.txt");
+
+    FILE* fp = fopen(file_message_name, "w+");
+    fputs(message, fp);
+    fclose(fp);
+
+    // Zip si folder
+    pid_t pid_for_zip = fork();
+
+    if (THIS_PROCESS == pid_for_zip) {
+      char zip_name[50];
+      strcat(zip_name, dir_timestamp);
+      strcat(zip_name, ".zip");
+
+      char* argv[] = { "zip", "-qq", "-r", zip_name, dir_timestamp, NULL };
+      execv("/usr/bin/zip", argv);
+    }
+
+    while(waitpid(pid_for_zip, NULL, WNOHANG | WUNTRACED) == PROCCESSING);
+
+    // Remove folder setelah zip
+    char* argv[] = { "rm", "-r", dir_timestamp, NULL };
+    execv("/bin/rm", argv);
   }
   
   return 0;
 }
 
 long get_timestamp(char time_stamp[]) {
-  time_t rawtime = time(NULL);
-  if (rawtime == -1) return -1;
+  time_t epochtime = time(NULL);
+  if (epochtime == -1) return -1;
 
-  struct tm* ptm = localtime(&rawtime);
+  struct tm* ptm = localtime(&epochtime);
   if (!ptm) return -1;
 
   char temp[5];
@@ -172,7 +161,7 @@ long get_timestamp(char time_stamp[]) {
   sprintf(temp, "%02d", ptm->tm_sec);
   strcat(time_stamp, temp);
 
-  return rawtime;
+  return epochtime;
 }
 
 void caesar_encrypt(char str[]) {
@@ -190,19 +179,24 @@ void create_kill_file(char mode) {
 
   switch (mode) {
     case 'z':
-      
-      fprintf(fp, "#!/bin/bash\nfor pid in $(ps -ef | awk '/soal3/ {print $2}'); do kill -9 $pid; done");
-      break;
+      fprintf(fp, "#!/bin/bash\n");
+      fprintf(fp, "for pid in $(ps -ef | awk '/soal3/ {print $2}'); do kill -9 $pid; done");
+      return (void) fclose(fp);
     
     case 'x':
-      fprintf(fp, "#!/bin/bash\nfor pid in $(ps -ef | awk '/soal3/ {print $2}'); do kill -15 $pid; done");
-      break;
-
-    default:
-      break;
+      fprintf(fp, "#!/bin/bash\n");
+      fprintf(fp, "for pid in $(ps -ef | awk '/soal3/ {print $2}'); do kill -15 $pid; done");
+      return (void) fclose(fp);
   }
+}
 
-  fclose(fp);
+void request_create_kill_file(char* args[]) {
+  const int EQUAL = 0;
+  if (strcmp(args[1], "-z") == EQUAL) return create_kill_file('z');
+  if (strcmp(args[1], "-x") == EQUAL) {
+    signal(SIGTERM, stop_process);
+    return create_kill_file('x');
+  }
 }
 
 void stop_process() {
