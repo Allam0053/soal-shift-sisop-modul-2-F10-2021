@@ -46,7 +46,10 @@ int main() {
     pid_t pid_download_pictures = fork();
 
     if (pid_download_pictures == 0) {
+      // ? Apakah perlu copy timestamp ?
       int downloaded_pictures = 0;
+      char this_timestamp[20];
+      strcpy(this_timestamp, dir_timestamp);
 
       while (downloaded_pictures++ < 10) {
         pid_t pid_for_download = fork();
@@ -99,10 +102,12 @@ int main() {
         execv("/usr/bin/zip", argv);
       }
 
+      // ? Apakah perlu wait untuk zip folder ?
+      while(wait(NULL) > 0);
+
       // remove folder
       char* argv[] = { "rm", "-r", dir_timestamp, NULL };
       execv("/bin/rm", argv);
-
       // exit(EXIT_SUCCESS);
     }
 
