@@ -18,7 +18,7 @@ void request_create_kill_file(char* args[]);
 void stop_process();
 
 int main(int argc, char* args[]) {
-  if (argc == 2) request_create_kill_file(args);
+  if (argc >= 2) request_create_kill_file(args);
 
   pid_t pid = fork();
 
@@ -32,7 +32,7 @@ int main(int argc, char* args[]) {
 
   // ! chdir() harus dihapus
   if (sid < 0) exit(EXIT_FAILURE);
-  if (chdir("/Users/riza/Documents/A-Kuliah/6-Sistem-Operasi/Praktikum/soal-shift-sisop-modul-2-F10-2021/soal3") < 0) exit(EXIT_FAILURE);
+  if (chdir("/") < 0) exit(EXIT_FAILURE);
 
   close(STDIN_FILENO);
   close(STDOUT_FILENO);
