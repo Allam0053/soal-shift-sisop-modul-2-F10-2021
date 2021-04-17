@@ -25,7 +25,7 @@ int main()
   sid1 = setsid();
   if(sid1 < 0)
     exit(EXIT_FAILURE);
-  if(chdir("/home/dewanggad99") < 0)
+  if(chdir("/home/allam") < 0)
     exit(EXIT_FAILURE);
   
   close(STDIN_FILENO);
@@ -36,124 +36,119 @@ int main()
   char musik1[] = "https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download";
   char film1[] = "https://drive.google.com/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download";
   
-  char fotozip[] = "/home/dewanggad99/Foto.zip";
-  char musikzip[] = "/home/dewanggad99/Musik.zip";
-  char filmzip[] = "/home/dewanggad99/Film.zip";
+  char fotozip[] = "Foto.zip";
+  char musikzip[] = "Musik.zip";
+  char filmzip[] = "Film.zip";
   
   while(1){
     //fill the rest here
     //Jam 4 sore
     time_t rawtime = time(NULL);
-  struct tm timeinfo = *localtime(&rawtime);
+    struct tm timeinfo = *localtime(&rawtime);
     
-    if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 16 && timeinfo.tm_min == 22)
+    if(timeinfo.tm_mday == 17 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 20 && timeinfo.tm_min == 47)
     {
-      //Buat jam 4
-      //Mungkin dikomen bagian EXIT_FAILURE-nya
-  pid_t pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg1[] = {"wget", "--no-check-certificate", foto1, "-O", fotozip, NULL};
-//https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
-    execv("/bin/wget", arg1);
-  }
-  
-  while(wait(NULL) > 0);
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg2[] = {"wget", "--no-check-certificate", musik1, "-O", musikzip, NULL};
-//https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
-    //https://drive.google.com/file/d/1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J/view
-    execv("/bin/wget", arg2);
-  }
-  
-  while(wait(NULL) > 0);
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg3[] = {"wget", "--no-check-certificate", film1, "-O", filmzip, NULL};
-//https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
-    //https://drive.google.com/file/d/1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J/view
-    //https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
-    execv("/bin/wget", arg3);
-  }
-while(wait(NULL) > 0);
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg4[] = {"unzip", fotozip, NULL};
-    execv("/bin/unzip", arg4);
-  }
- while(wait(NULL) > 0);
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg5[] = {"unzip", musikzip, NULL};
-    execv("/bin/unzip", arg5);
-  }
- while(wait(NULL) > 0);
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg6[] = {"unzip", filmzip, NULL};
-    execv("/bin/unzip", arg6);
-  }
- 
-  while(wait(NULL) > 0);
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg7[] = {"mv", "/home/dewanggad99/FOTO", "/home/dewanggad99/Pyoto", NULL};
-    execv("/bin/mv", arg7);
-  }
-  while(wait(NULL) > 0);
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg8[] = {"mv", "/home/dewanggad99/MUSIK", "/home/dewanggad99/Myusik", NULL};
-    execv("/bin/mv", arg8);
-  }
-  while(wait(NULL) > 0);
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg9[] = {"mv", "/home/dewanggad99/FILM", "/home/dewanggad99/Fylm", NULL};
-    execv("/bin/mv", arg9);
-  }
-  //Akhir jam 4 sore
+      pid_t pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg1[] = {"wget", "--no-check-certificate", foto1, "-O", fotozip, NULL};
+          //https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
+          execv("/bin/wget", arg1);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+      char *arg2[] = {"wget", "--no-check-certificate", musik1, "-O", musikzip, NULL};
+          //https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
+          //https://drive.google.com/file/d/1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J/view
+          execv("/bin/wget", arg2);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg3[] = {"wget", "--no-check-certificate", film1, "-O", filmzip, NULL};
+          //https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
+          //https://drive.google.com/file/d/1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J/view
+          //https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
+          execv("/bin/wget", arg3);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg4[] = {"unzip", fotozip, NULL};
+          execv("/bin/unzip", arg4);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg5[] = {"unzip", musikzip, NULL};
+          execv("/bin/unzip", arg5);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg6[] = {"unzip", filmzip, NULL};
+          execv("/bin/unzip", arg6);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if(pid < 0) exit(EXIT_FAILURE);
+      if(pid == 0){
+          char *arg7[] = {"mv", "FOTO", "Pyoto", NULL};
+          execv("/bin/mv", arg7);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg8[] = {"mv", "MUSIK", "Myusik", NULL};
+          execv("/bin/mv", arg8);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg9[] = {"mv", "FILM", "Fylm", NULL};
+          execv("/bin/mv", arg9);
+      }
+
+      //Akhir jam 4 sore
     }
     
   
     
-    else if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 22 && timeinfo.tm_min == 22)
+    else if(timeinfo.tm_mday == 17 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 20 && timeinfo.tm_min == 48)
     {
       //Buat jam 10
       //Jam 10
-  pid_t pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg10[] = {"zip", "-r", "/home/dewanggad99/Lopyu_Stevany.zip", "/home/dewanggad99/Pyoto", "/home/dewanggad99/Myusik", "/home/dewanggad99/Fylm", NULL};
-    execv("/bin/zip", arg10);
-  }
-  while(wait(NULL) > 0);
-  pid = fork();
-  if(pid < 0)
-    exit(EXIT_FAILURE);
-  if(pid == 0){
-    char *arg11[] = {"rm", "-r", "/home/dewanggad99/Pyoto", "/home/dewanggad99/Myusik", "/home/dewanggad99/Fylm", NULL};
-    execv("/bin/rm", arg11);
-  }
+      while(wait(NULL) > 0);
+      pid_t pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg10[] = {"zip", "-r", "Lopyu_Stevany.zip", "Pyoto", "Myusik", "Fylm", NULL};
+          execv("/bin/zip", arg10);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg11[] = {"rm", "-r", "Pyoto", "Myusik", "Fylm", NULL};
+          execv("/bin/rm", arg11);
+      }
     }
     
   

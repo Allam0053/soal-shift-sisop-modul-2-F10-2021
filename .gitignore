@@ -61,6 +61,7 @@ Temporary Items
 *.zip
 *.txt
 *tes*
+soal2/soal2
 
 soal3/*
 !soal3/soal3.c
