@@ -35,6 +35,11 @@ int main()
   char foto1[] = "https://drive.google.com/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download";
   char musik1[] = "https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download";
   char film1[] = "https://drive.google.com/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download";
+  
+  char fotozip[] = "/home/dewanggad99/Foto.zip";
+  char musikzip[] = "/home/dewanggad99/Musik.zip";
+  char filmzip[] = "/home/dewanggad99/Film.zip";
+  
   while(1){
     //fill the rest here
     //Jam 4 sore
@@ -49,7 +54,7 @@ int main()
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
-    char *arg1[] = {"wget", "--no-check-certificate", foto1, "-O", "home/dewanggad99/Foto.zip", NULL};
+    char *arg1[] = {"wget", "--no-check-certificate", foto1, "-O", fotozip, NULL};
 //https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
     execv("/bin/wget", arg1);
   }
@@ -59,7 +64,7 @@ int main()
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
-    char *arg2[] = {"wget", "--no-check-certificate", musik1, "-O", "home/dewanggad99/Musik.zip", NULL};
+    char *arg2[] = {"wget", "--no-check-certificate", musik1, "-O", musikzip, NULL};
 //https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
     //https://drive.google.com/file/d/1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J/view
     execv("/bin/wget", arg2);
@@ -70,7 +75,7 @@ int main()
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
-    char *arg3[] = {"wget", "--no-check-certificate", film1, "-O", "home/dewanggad99/Film.zip", NULL};
+    char *arg3[] = {"wget", "--no-check-certificate", film1, "-O", filmzip, NULL};
 //https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
     //https://drive.google.com/file/d/1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J/view
     //https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
@@ -81,7 +86,7 @@ while(wait(NULL) > 0);
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
-    char *arg4[] = {"unzip", "home/dewanggad99/Foto.zip", NULL};
+    char *arg4[] = {"unzip", fotozip, NULL};
     execv("/bin/unzip", arg4);
   }
  while(wait(NULL) > 0);
@@ -89,7 +94,7 @@ while(wait(NULL) > 0);
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
-    char *arg5[] = {"unzip", "home/dewanggad99/Musik.zip", NULL};
+    char *arg5[] = {"unzip", musikzip, NULL};
     execv("/bin/unzip", arg5);
   }
  while(wait(NULL) > 0);
@@ -97,7 +102,7 @@ while(wait(NULL) > 0);
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
-    char *arg6[] = {"unzip", "home/dewanggad99/Film.zip", NULL};
+    char *arg6[] = {"unzip", filmzip, NULL};
     execv("/bin/unzip", arg6);
   }
  
@@ -138,7 +143,7 @@ while(wait(NULL) > 0);
   if(pid < 0)
     exit(EXIT_FAILURE);
   if(pid == 0){
-    char *arg10[] = {"zip", "-r", "Lopyu_Stevany.zip", "/home/dewanggad99/Pyoto", "/home/dewanggad99/Myusik", "/home/dewanggad99/Fylm", NULL};
+    char *arg10[] = {"zip", "-r", "/home/dewanggad99/Lopyu_Stevany.zip", "/home/dewanggad99/Pyoto", "/home/dewanggad99/Myusik", "/home/dewanggad99/Fylm", NULL};
     execv("/bin/zip", arg10);
   }
   while(wait(NULL) > 0);
