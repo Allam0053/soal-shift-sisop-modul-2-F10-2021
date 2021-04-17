@@ -46,7 +46,7 @@ int main()
     time_t rawtime = time(NULL);
     struct tm timeinfo = *localtime(&rawtime);
     
-    if(timeinfo.tm_mday == 17 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 20 && timeinfo.tm_min == 47)
+    if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 16 && timeinfo.tm_min == 22)
     {
       pid_t pid = fork();
       if (pid < 0) exit(EXIT_FAILURE);
@@ -130,7 +130,7 @@ int main()
     
   
     
-    else if(timeinfo.tm_mday == 17 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 20 && timeinfo.tm_min == 48)
+    else if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 22 && timeinfo.tm_min == 22)
     {
       //Buat jam 10
       //Jam 10
