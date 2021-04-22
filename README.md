@@ -200,10 +200,10 @@
 
     - Jika mode -z maka file killer akan dibuat menggunakan fungsi user-defined `create_kill_file()` dengan mode 'z' ([lihat disini](https://github.com/Allam0053/soal-shift-sisop-modul-2-F10-2021/blob/main/soal3/soal3.c#L177))
 
-    - Jika mode -x maka akan didaftarakan event listener untuk **sinyal 15** (direpresentasinya pada variable `SIGTERM`) dimana jika sinyal 15 diterima maka fungsi `stop_process()` akan dijalankan. Kemudian membuat file killer menggunakan fungsi `create_kill_file()` dengan mode 'x'
+    - Jika mode -x maka akan didaftarakan event listener untuk **sinyal 15** (direpresentasinya pada variable `SIGTERM`) dimana jika sinyal 15 diterima maka fungsi `stop_process()` ([lihat disini](https://github.com/Allam0053/soal-shift-sisop-modul-2-F10-2021/blob/main/soal3/soal3.c#L202)) akan dijalankan dimana fungsi `stop_process()` akan membuat variabel global `signal_process` **bernilai 0**. Kemudian membuat file killer menggunakan fungsi `create_kill_file()` dengan mode 'x'
 
   <br>
 
   - Jika mode -z maka file killernya akan meng-kill dengan mengirim **sinyal 9** sehingga jika program killer dijalankan maka proses daemon akan langsung berhenti saat itu juga.
 
-  - Jika mode -x maka file killernya akan meng-kill dengan mengirim **sinyal 15** sehingga ketika program daemon ini menerima sinyal tersebut maka variabel global `signal_process` akan bernilai 0 sehingga loop pada daemon tidak akan dilanjutkan lagi kemudian proses daemon akan berakhir (dengan menyelesaikan dulu proses saat itu yang sedang berjalan)
+  - Jika mode -x maka file killernya akan mengirim **sinyal 15** sehingga ketika program daemon ini menerima sinyal tersebut fungsi `stop_process()` akan dijalankan yang menyebabkan variabel global `signal_process` akan **bernilai 0**. Akibatnya proses daemon yang saat itu berjalan akan diselesaiakan sampai selesai kemudian daemon akan berkahir karena loop utama daemmon `while (signal_process)` berhenti.
