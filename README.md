@@ -43,10 +43,41 @@ https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
       char musikzip[] = "Musik.zip";
       char filmzip[] = "Film.zip";
 
-
 - Karena soal ini menggunakan fungsi waktu untuk menentukan waktu yang tepat, seperti pada jam 16.22 dan 22.22 pada tanggal 9 April, maka diperlukan library C bernama time.h yang memiliki fungsi time_t dan struct tm untuk menemukan waktu yang tertulis di dalam sistem
-- Masing-masing perintah memiliki fork yang berbeda. Mendownload file zip satu fork, mengekstrak file zip satu fork, memindahkan folder-folder satu fork, memasukan ke dalam file zip satu fork, dan menghapus folder satu fork
+
+      #include <time.h>
+
+      time_t rawtime = time(NULL);
+      struct tm timeinfo = *localtime(&rawtime);
+
+- Masing-masing perintah memiliki fork yang berbeda. Mendownload file zip satu fork, mengekstrak file zip satu fork, memindahkan folder-folder satu fork, memasukan ke dalam file zip satu fork, dan menghapus folder satu fork. Diantara masing-masing perintah dibatasi dengan :
+   
+      while(wait(NULL) > 0)
+      
+agar masing-masing perintah berjalan secara urut dan tidak bersamaan. (Atau agar sistem tidak bingung).
+
 - Jika waktunya adalah jam 16.22 pada tanggal 9 April, maka dilakukan proses mendownload file zip, lalu mengekstraktnya, dan memindahkan foldernya. Selama mengekstrak, zip akan menghasilkan folder yang berisi beberapa file yang sudah ada berada di dalamnya, dan fungsi mv dalam shell bukan hanya memindahkan satu file atau folder ke tempat lain, tetapi mengubah nama file/folder menjadi nama lainnya selama di dalam sistem tidak ada nama lainnya sebelumnya
+
+      if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 16 && timeinfo.tm_min == 22)
+      
+Perlu diketahui bahwa untuk timeinfo.tm_mon, Januari diterjemahkan menjadi bulan ke-0, bukan bulan ke-1
+
+1b. Mendownload file zip dari link-link sebelumnya
+
+      pid_t pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg1[] = {"wget", "--no-check-certificate", foto1, "-O", fotozip, NULL};
+          //https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/
+          execv("/bin/wget", arg1);
+      }
+
+      while(wait(NULL) > 0);
+      
+Karena proses mengunduh masing-masing file tidak jauh berbeda, hanya ada perubahan link download dalam string char multidimensi dan nama file-nya, ditampilkan salah satu perintah mengunduh, yaitu mengunduh file zip yang berisi folder FOTO. Awalnya ditentukan nilai dari fork() kepada variabel pid. Setelah di-inisialisasi nilai fork, yang seharusnya pasti 0 kalau bukan nilai PID, akan dilakukan perintah di dalam fungsi if(pid == 0).
+
+Di-inisialisasikan suatu string char dua dimensi yang berisikan command dalam bahasa bash yang diakhiri dengan nilai NULL. Command tersebut adalah command wget untuk mendownload suatu file dari website di dalam command tersebut tanpa memperhatikan sertifikat dari website tersebut dan lalu hasil download tersebut diubah namanya. String char dua dimensi ini akan dieksekusi oleh fungsi execv. Setelah perintah sudah dijalankan, akan diakhiri dengan while(wait(NULL) > 0) untuk menjalankan perintah setelahnya.
+
 - Jika waktunya adalah jam 22.22 pada tanggal 9 April, maka dilakukan proses memasukan folder-folder sebelumnya ke dalam zip. Setelah tiga folder tadi dimasukan ke dalam zip, folder-folder tadi dihapuskan sehingga meninggalkan zip-nya saja
 
 # Nomor 2
