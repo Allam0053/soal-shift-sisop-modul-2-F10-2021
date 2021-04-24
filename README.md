@@ -28,6 +28,177 @@ https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
 - Jika waktunya adalah jam 16.22 pada tanggal 9 April, maka dilakukan proses mendownload file zip, lalu mengekstraktnya, dan memindahkan foldernya. Selama mengekstrak, zip akan menghasilkan folder yang berisi beberapa file yang sudah ada berada di dalamnya, dan fungsi mv dalam shell bukan hanya memindahkan satu file atau folder ke tempat lain, tetapi mengubah nama file/folder menjadi nama lainnya selama di dalam sistem tidak ada nama lainnya sebelumnya
 - Jika waktunya adalah jam 22.22 pada tanggal 9 April, maka dilakukan proses memasukan folder-folder sebelumnya ke dalam zip. Setelah tiga folder tadi dimasukan ke dalam zip, folder-folder tadi dihapuskan sehingga meninggalkan zip-nya saja
 
+# Nomor 2
+
+- Pertama-tama program perlu mengextract zip yang diberikan ke dalam folder “/home/[user]/modul2/petshop”. Karena bos Loba teledor, dalam zip tersebut bisa berisi folder-folder yang tidak penting, maka program harus bisa membedakan file dan folder sehingga dapat memproses file yang seharusnya dikerjakan dan menghapus folder-folder yang tidak dibutuhkan.
+
+- Foto peliharaan perlu dikategorikan sesuai jenis peliharaan, maka kamu harus membuat folder untuk setiap jenis peliharaan yang ada dalam zip. Karena kamu tidak mungkin memeriksa satu-persatu, maka program harus membuatkan folder-folder yang dibutuhkan sesuai dengan isi zip.
+Contoh: Jenis peliharaan kucing akan disimpan dalam “/petshop/cat”, jenis peliharaan kura-kura akan disimpan dalam “/petshop/turtle”.
+
+- Setelah folder kategori berhasil dibuat, programmu akan memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan.
+Contoh: “/petshop/cat/joni.jpg”. 
+
+- Karena dalam satu foto bisa terdapat lebih dari satu peliharaan maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama “dog;baro;1_cat;joni;2.jpg” dipindah ke folder “/petshop/cat/joni.jpg” dan “/petshop/dog/baro.jpg”.
+
+- Di setiap folder buatlah sebuah file "keterangan.txt" yang berisi nama dan umur semua peliharaan dalam folder tersebut. Format harus sesuai contoh.
+
+<br>
+
+# Solusi Nomor 2
+
+- Sebelum menyelesaikan persoalan 2a dan selanjutnya, diperlukan file pets.zip. Maka diunduh dengan memasukkan perintah sebagai berikut:
+
+      char link[] = "https://drive.google.com/uc?id=1g5rehatLEkqvuuK_eooHJXB57EfdnxVD&export=download";
+      char dir_[] = "/home/allam/Downloads/pets.zip";
+      char *arg_init0[] = {wget_[1], link, "-O", dir_, NULL};
+      util (&cpid, wget_[0], arg_init0);
+
+- Berikutnya file dipindah ke directory Downloads
+
+      tunggu
+
+      char source[] = "/home/allam/Downloads/pets.zip";
+      char dest__[] = "/home/allam/pets.zip";
+      char *arg_init1[] = {mv___[1], source, dest__, NULL};
+      util (&cpid, mv___[0], arg_init1);
+
+- Method / function util() adalah function untuk membuat child process. Function ini dibuat karena proses pembuatan child dilakukan lebih dari tiga kali sehingga diharapkan dapat menyederhanakan code. Berikut adalah isi method tersebut:
+
+      void util (pid_t *cpid, char *arg, char **argv) {
+        *cpid = fork();
+        if (*cpid < 0) exit(1);
+        if (*cpid == 0) {
+            execv(arg, argv);
+            exit(0);
+        }
+        return;
+      }
+
+## 2a
+- Untuk menyelesaikan task 2am program melakukan ekstrak pets.zip tanpa menyertakan folder yang tidak penting berikut adalah code dari program yang telah dibuat:
+
+      char *arg_2a[] = {mkdir[1], "-p", target_loc, NULL};
+      util (&cpid1, mkdir[0], arg_2a);
+
+      tunggu
+
+      char *arg_2a1[] = {unzip[1], zip_file, "-d", target_loc, "-x", "*/*", NULL};
+      util (&cpid2, unzip[0], arg_2a1);
+  
+  Inti dari code tersebut adalah membuat directory "/home/allam/modul2/petshop" lalu mengekstrak file yang diperlukan pada directory tersebut. Digunakan option -x untuk mengecualikan folder dan file dalam folder yang tidak berguna tersebut.
+
+## 2b
+- Program membuat folder dengan memeriksa tiap file, tiap jenis hewan yang ada akan dibuatkan folder tersendiri. berikut adalah code untuk 2b:
+
+      cpid3 = fork();
+      if (cpid3 < 0) exit(EXIT_FAILURE);
+      
+      if (cpid3 == 0) {
+          listFilesRecursively("/home/allam/modul2/petshop");
+          for (int i=0; i<list_dir; i++) {
+              char *arg_2b[] = {mkdir[1], "-p", makedir[i], NULL};
+              util (&cpid4, mkdir[0], arg_2b);
+          }
+          tunggu
+          printf("2b selesai\n");
+          exit(EXIT_SUCCESS);
+      }
+  
+  Dengan menggunakan function listFilesRecursively() maka daftar jenis hewan akan tersimpan pada variable "char makedir[100][100]". Setelah mendapatkan jenis hewan maka akan dibuatkan folder dengan function util (&cpid4, mkdir[0], arg_2b).
+
+## 2c dan 2d
+- Program melakukan pemindahan file dan merubah nama file sesuai dengan nama hewan yang ada. Berikut adalah code untuk 2c:
+
+      listFiles("/home/allam/modul2/petshop");
+      char temp[100];
+      char source[200], dest__[200];
+      char under[]="_";
+      char jpg[]=".jpg";
+
+      for (int i=0; i<list_files; i++) {
+          sprintf(source, "%s/%s", target_loc, files[i]);
+          strcpy(temp, files[i]);
+          strcpy(kind[i], strtok(temp,";"));
+          strcpy(name[i], strtok(NULL,";"));
+          strcpy(age[i], strtok(NULL,"j"));
+          age[i][strlen(age[i])-1] = '\0';
+
+          if(strstr(files[i], jpg)==NULL){ //if 1 poto ada 2 hewan: duplicate, namai poto dg 1 hewan
+              tunggu
+
+              sprintf(source, "%s/%s%s%s", target_loc, files[i], under, files[i+1]);
+              sprintf(dest__, "%s/%s.jpg", target_loc, files[i]);
+              char *arg_2c[] = {cp___[1], source, dest__, NULL};
+              util (&cpid6, cp___[0], arg_2c);
+
+              tunggu
+
+              sprintf(source, "%s/%s%s%s", target_loc, files[i], under, files[i+1]);
+              sprintf(dest__, "%s/%s", target_loc, files[i+1]);
+              char *arg_2c1[] = {mv___[1], source, dest__, NULL};
+              util (&cpid6, mv___[0], arg_2c1);
+
+              strcat(files[i],".jpg");            
+          }
+          tunggu
+
+          sprintf(source, "%s/%s", target_loc, files[i]);
+          sprintf(dest__, "%s/%s/%s.jpg", target_loc, kind[i], name[i]);
+          char *arg_2c2[] = {mv___[1], source, dest__, NULL};
+          util (&cpid6, mv___[0], arg_2c2);
+      }
+
+      tunggu
+      printf("2c 2d selesai\n");
+  
+  Function listFiles("/home/allam/modul2/petshop") akan membaca ada file apa saja di directory tersebut (tanpa membaca folder), lalu akan menyimpan nama-nama file yang ada pada variable "char files[100][100]". Lalu data tiap hewan akan disimpan pada variable char kind[100][100] untuk jenis hewan, char name[100][100] untuk nama hewannya, dan char age[100][100] untuk umur hewan. Bila file mempunyai dua hewan maka akan diduplikasi dan direname dengan nama salah satu hewan di satu file dan nama hewan yg lain pada file yang lainnya. Setelah proses pengambilan data hewan, files akan dipindah sesuai jenis hewan dan direname dengan nama hewannya saja.
+
+## 2e
+- Program menulisakan data yang ada pada folder terkait pada keterangan.txt. Berikut adalah code untuk program tersebut:
+
+      FILE *output;
+      listFolder(target_loc);
+
+      for(int i=0; i<list_folders; i++) {
+          tunggu
+          sprintf(dest__, "%s/%s/keterangan.txt", target_loc, folders[i]);
+          char *arg_2e[] = {touch[1], dest__, NULL};
+          util (&cpid8, touch[0], arg_2e);
+
+          tunggu
+
+          cpid8 = fork();
+          if (cpid8 < 0) exit(1);
+          if (cpid8 == 0) {
+              pid_t pid, sid;
+
+              pid = fork();
+              if (pid < 0) exit(EXIT_FAILURE);
+              if (pid > 0) exit(EXIT_SUCCESS);
+              umask(0);
+              sid = setsid();
+              if (sid < 0) exit(EXIT_FAILURE);
+              if ((chdir("/")) < 0) exit(EXIT_FAILURE);
+
+              sprintf(dest__, "%s/%s/keterangan.txt", target_loc, folders[i]);
+              output = fopen(dest__, "w+");
+              umask(0);
+              for(int j=0; j<list_files; j++) {
+                  if( strcmp(folders[i], kind[j])==0 ) {
+                      fprintf(output, "nama : %s\n", name[j]);
+                      fprintf(output, "umur : %s tahun\n\n", age[j]);
+                  }
+              }
+              fclose(output);
+
+              exit(0);
+          }
+      }
+      tunggu
+      printf("2e selesai\n");
+
+  Sesuai data yang telah diperoleh atau direkam pada 2c dan 2d, tiap data tersebut dicetak pada file terkait yaitu keterangan.txt pada tiap folder jenis hewan. Sebelum menuliskan data, file keterangan.txt dibuat dengan command touch.
+
 # Nomor 3
 
 - Membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
