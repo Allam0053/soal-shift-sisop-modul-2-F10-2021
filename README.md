@@ -23,7 +23,10 @@ https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
 
 # Penyelesaian Nomor 1
 
-
+- Karena soal ini menggunakan fungsi waktu untuk menentukan waktu yang tepat, seperti pada jam 16.22 dan 22.22 pada tanggal 9 April, maka diperlukan library C bernama time.h yang memiliki fungsi time_t dan struct tm untuk menemukan waktu yang tertulis di dalam sistem
+- Masing-masing perintah memiliki fork yang berbeda. Mendownload file zip satu fork, mengekstrak file zip satu fork, memindahkan folder-folder satu fork, memasukan ke dalam file zip satu fork, dan menghapus folder satu fork
+- Jika waktunya adalah jam 16.22 pada tanggal 9 April, maka dilakukan proses mendownload file zip, lalu mengekstraktnya, dan memindahkan foldernya. Selama mengekstrak, zip akan menghasilkan folder yang berisi beberapa file yang sudah ada berada di dalamnya, dan fungsi mv dalam shell bukan hanya memindahkan satu file atau folder ke tempat lain, tetapi mengubah nama file/folder menjadi nama lainnya selama di dalam sistem tidak ada nama lainnya sebelumnya
+- Jika waktunya adalah jam 22.22 pada tanggal 9 April, maka dilakukan proses memasukan folder-folder sebelumnya ke dalam zip. Setelah tiga folder tadi dimasukan ke dalam zip, folder-folder tadi dihapuskan sehingga meninggalkan zip-nya saja
 
 # Nomor 3
 
