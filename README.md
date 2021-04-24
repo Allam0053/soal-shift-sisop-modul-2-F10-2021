@@ -6,7 +6,7 @@ https://drive.google.com/drive/folders/1V_GKtlUyMYF2W-LEMDsg_AkY7COs2mun?usp=sha
 # Nomor 1
 
 Steven menjadi budak cinta bagi Stevany. Sehingga Steven ingin memberikan suatu hadiah kepada Stevany berupa sebuah zip berisi berbagai foto, musik, dan video. Tahapan yang akan dilakukan Steven :
-- Mendownload tiga zip masing-masing berisi folder FOTO yang berisikan file-file foto, MUSIK yang berisikan file-file musik, dan FILM yang berisikan file-file video, secara berurutan
+1b. Mendownload tiga zip masing-masing berisi folder FOTO yang berisikan file-file foto, MUSIK yang berisikan file-file musik, dan FILM yang berisikan file-file video, secara berurutan
 
 https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/view
 
@@ -14,11 +14,11 @@ https://drive.google.com/file/d/1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J/view
 
 https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
 
-- Zip tersebut harus di-ekstrak. Karena hasil ekstraknya berupa folder, maka foldernya cukup diubah namanya secara berurutan (Jujur, sedikit alay) menjadi Pyoto, Musyik, dan Fylm
+1c. 1d. dan 1a. Zip tersebut harus di-ekstrak. Karena hasil ekstraknya berupa folder, maka foldernya cukup diubah namanya secara berurutan (Jujur, sedikit alay) menjadi Pyoto, Musyik, dan Fylm
 
-- Tahapan diatas dilakukan secara otomatis pada jam 16.22 tanggal 9 April, 6 jam sebelum waktu ulang tahun Stevany, menurut Akte Kelahirannya
+1e. Tahapan diatas dilakukan secara otomatis pada jam 16.22 tanggal 9 April, 6 jam sebelum waktu ulang tahun Stevany, menurut Akte Kelahirannya
 
-- Pada saat waktu ulang tahunnya Stevany, jam 22.22 tanggal 9 April, secara otomatis folder-folder Pyoto, Musyik, dan Fylm dimasukkan ke dalam zip bernama Lopyu_Stevany.zip. Setelah itu, folder-folder yang sudah dimasukkan ke dalam zip dihapuskan sehingga hanya menyisakan zip-nya
+1f. Pada saat waktu ulang tahunnya Stevany, jam 22.22 tanggal 9 April, secara otomatis folder-folder Pyoto, Musyik, dan Fylm dimasukkan ke dalam zip bernama Lopyu_Stevany.zip. Setelah itu, folder-folder yang sudah dimasukkan ke dalam zip dihapuskan sehingga hanya menyisakan zip-nya
 
 - Semua tahapan di atas dijadikan ke dalam satu script latar belakang (Daemon)
 - Tidak boleh menggunakan system(), mkdir(), rename(), cron
@@ -26,7 +26,7 @@ https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
 
 # Penyelesaian Nomor 1
 
-- Website-website di atas akan dituliskan di dalam format :
+- Website-website di atas akan diunduh menggunakan command bash :
 
       wget --no-check-certificate https://drive.google.com/uc?id=[id file]&export=download" -O [Namafile].zip
       
@@ -43,26 +43,13 @@ https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
       char musikzip[] = "Musik.zip";
       char filmzip[] = "Film.zip";
 
-- Karena soal ini menggunakan fungsi waktu untuk menentukan waktu yang tepat, seperti pada jam 16.22 dan 22.22 pada tanggal 9 April, maka diperlukan library C bernama time.h yang memiliki fungsi time_t dan struct tm untuk menemukan waktu yang tertulis di dalam sistem
-
-      #include <time.h>
-
-      time_t rawtime = time(NULL);
-      struct tm timeinfo = *localtime(&rawtime);
-
 - Masing-masing perintah memiliki fork yang berbeda. Mendownload file zip satu fork, mengekstrak file zip satu fork, memindahkan folder-folder satu fork, memasukan ke dalam file zip satu fork, dan menghapus folder satu fork. Diantara masing-masing perintah dibatasi dengan :
    
       while(wait(NULL) > 0)
       
 agar masing-masing perintah berjalan secara urut dan tidak bersamaan. (Atau agar sistem tidak bingung).
 
-- Jika waktunya adalah jam 16.22 pada tanggal 9 April, maka dilakukan proses mendownload file zip, lalu mengekstraktnya, dan memindahkan foldernya. Selama mengekstrak, zip akan menghasilkan folder yang berisi beberapa file yang sudah ada berada di dalamnya, dan fungsi mv dalam shell bukan hanya memindahkan satu file atau folder ke tempat lain, tetapi mengubah nama file/folder menjadi nama lainnya selama di dalam sistem tidak ada nama lainnya sebelumnya
-
-      if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 16 && timeinfo.tm_min == 22)
-      
-Perlu diketahui bahwa untuk timeinfo.tm_mon, Januari diterjemahkan menjadi bulan ke-0, bukan bulan ke-1
-
-1b. Mendownload file zip dari link-link sebelumnya
+## 1b. Mendownload file zip dari link-link sebelumnya
 
       pid_t pid = fork();
       if (pid < 0) exit(EXIT_FAILURE);
@@ -76,9 +63,72 @@ Perlu diketahui bahwa untuk timeinfo.tm_mon, Januari diterjemahkan menjadi bulan
       
 Karena proses mengunduh masing-masing file tidak jauh berbeda, hanya ada perubahan link download dalam string char multidimensi dan nama file-nya, ditampilkan salah satu perintah mengunduh, yaitu mengunduh file zip yang berisi folder FOTO. Awalnya ditentukan nilai dari fork() kepada variabel pid. Setelah di-inisialisasi nilai fork, yang seharusnya pasti 0 kalau bukan nilai PID, akan dilakukan perintah di dalam fungsi if(pid == 0).
 
-Di-inisialisasikan suatu string char dua dimensi yang berisikan command dalam bahasa bash yang diakhiri dengan nilai NULL. Command tersebut adalah command wget untuk mendownload suatu file dari website di dalam command tersebut tanpa memperhatikan sertifikat dari website tersebut dan lalu hasil download tersebut diubah namanya. String char dua dimensi ini akan dieksekusi oleh fungsi execv. Setelah perintah sudah dijalankan, akan diakhiri dengan while(wait(NULL) > 0) untuk menjalankan perintah setelahnya.
+Di-inisialisasikan suatu string char dua dimensi yang berisikan command dalam bahasa bash yang diakhiri dengan nilai NULL. Command tersebut adalah command wget untuk mendownload suatu file dari website di dalam command tersebut tanpa memperhatikan sertifikat dari website tersebut dan lalu hasil download tersebut diubah namanya. String char dua dimensi ini akan dieksekusi oleh fungsi execv. Setelah perintah sudah dijalankan, akan diakhiri dengan while(wait(NULL) > 0) untuk menjalankan perintah setelahnya, yaitu mendowndload file zip berisi musik dan film, yang mana tidak bisa dilakukan bersamaan dengan mendownload file zip foto karena wget dijalankan satu-persatu
 
-- Jika waktunya adalah jam 22.22 pada tanggal 9 April, maka dilakukan proses memasukan folder-folder sebelumnya ke dalam zip. Setelah tiga folder tadi dimasukan ke dalam zip, folder-folder tadi dihapuskan sehingga meninggalkan zip-nya saja
+Dan comment di bawah hanya untuk mengingat nama id link yang akan diunduh
+
+## 1c. Mengekstrak zip-zip yang sudah di download
+
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg4[] = {"unzip", fotozip, NULL};
+          execv("/bin/unzip", arg4);
+      }
+
+Untuk mengekstrak file zip, maka diperlukan command bash unzip. Perintah unzip dijalankan di dalam if jika nilai fork() adalah 0
+
+## 1d. dan 1a. Memindahkan file di dalam folder yang sudah diekstrak ke dalam folder tujuan
+
+      pid = fork();
+      if(pid < 0) exit(EXIT_FAILURE);
+      if(pid == 0){
+          char *arg7[] = {"mv", "FOTO", "Pyoto", NULL};
+          execv("/bin/mv", arg7);
+      }
+Perintah 1a dan 1d bisa digabungkan dengan menggunakan command bash mv, yang mana bisa mengubah nama folder dengan cara membuat folder baru bernama secara berurutan untuk masing-masing folder Pyoto, Musyik, dan Fylm lalu memindahkan seluruh isi folder lama ke dalam folder baru tersebut. Kemudian folder lama tersebut dihapuskan
+
+## 1e. 1a. sampai 1d. dijalankan 6 jam secara otomatis sebelum jam 22.22 pada tanggal 9 April (Yaitu jam 16.22 pada tanggal yang sama)
+
+Karena soal ini menggunakan fungsi waktu untuk menentukan waktu yang tepat, seperti pada jam 16.22 dan 22.22 pada tanggal 9 April, maka diperlukan library C bernama time.h yang memiliki fungsi time_t dan struct tm untuk menemukan waktu yang tertulis di dalam sistem
+
+      #include <time.h>
+
+      time_t rawtime = time(NULL);
+      struct tm timeinfo = *localtime(&rawtime);
+      
+Jika waktu dalam sistem adalah jam 16.22 pada tanggal 9 April, maka soal nomor 1a. sampai 1d. dijalankan secara berurutan. Sedangkan jika waktu dalam sistem adalah 22.22 pada tanggal 9 April, maka soal nomor 1f. dijalankan
+
+      if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 16 && timeinfo.tm_min == 22)
+      /*proses 1a. sampai 1d.*/
+      else if(timeinfo.tm_mday == 9 && timeinfo.tm_mon + 1 == 4 && timeinfo.tm_hour == 22 && timeinfo.tm_min == 22)
+      /*proses 1f.*/
+
+Perlu diketahui bahwa untuk timeinfo.tm_mon, Januari diterjemahkan menjadi bulan ke-0, bukan bulan ke-1, dan ada berbagai sub-struct yang dapat menyebutkan hari dengan berbagai format (Hari ke berapa dalam se-tahun, hari ke berapa dalam satu minggu, dan yang digunakan, hari ke berapa dalam satu bulan)
+
+## 1f. Memasukan folder-folder tadi ke dalam zip Lopyu_Stevany.zip
+
+      pid_t pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg10[] = {"zip", "-r", "Lopyu_Stevany.zip", "Pyoto", "Myusik", "Fylm", NULL};
+          execv("/bin/zip", arg10);
+      }
+
+      while(wait(NULL) > 0);
+      pid = fork();
+      if (pid < 0) exit(EXIT_FAILURE);
+      if (pid == 0) {
+          char *arg11[] = {"rm", "-r", "Pyoto", "Myusik", "Fylm", NULL};
+          execv("/bin/rm", arg11);
+      }
+      
+Ada dua operasi dalam 1f, yaitu memasukan folder Pyoto, Myusik, dan Fylm ke dalam zip Lopyu_Stevany.zip, dan menghapus folder Pyoto, Myusik, dan Fylm sehingga menyisakan zip-nya saja.
+
+Command zip tidak akan juga memasukan file-file di dalam folder yang akan dimasukan ke dalam zip jika tidak diikuti dengan command -r (recursive) yang akan mengikutsertakan file-file di dalam folder. Begitupula dengan command rm, yang akan menghapus folder tersebut beserta file-file di dalamnya
+
+- Dan yang terakhir, seluruh operasi tersebut, dari 1a. sampai 1f., terletak di dalam while(1) dan diakhiri dengan sleep(). Fungsi sleep() adalah untuk menentukan setelah berapa detik program daemon menge-loop
+- Kesulitan dalam penyelesaian terletak pada batasan download dari Google Drive sehingga memunculkan error 403 dari ouput wget. Perlu beberapa kali restart untuk mendownload file zip dari link Google Drive tersebut. 
 
 # Nomor 2
 
