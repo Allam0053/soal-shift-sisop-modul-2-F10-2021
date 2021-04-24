@@ -1,5 +1,8 @@
 # soal-shift-sisop-modul-2-F10-2021
 
+berikut adalah rekaman jalannya program:
+https://drive.google.com/drive/folders/1V_GKtlUyMYF2W-LEMDsg_AkY7COs2mun?usp=sharing
+
 # Nomor 1
 
 Steven menjadi budak cinta bagi Stevany. Sehingga Steven ingin memberikan suatu hadiah kepada Stevany berupa sebuah zip berisi berbagai foto, musik, dan video. Tahapan yang akan dilakukan Steven :
