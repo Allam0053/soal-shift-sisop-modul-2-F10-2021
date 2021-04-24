@@ -1,5 +1,30 @@
 # soal-shift-sisop-modul-2-F10-2021
 
+# Nomor 1
+
+Steven menjadi budak cinta bagi Stevany. Sehingga Steven ingin memberikan suatu hadiah kepada Stevany berupa sebuah zip berisi berbagai foto, musik, dan video. Tahapan yang akan dilakukan Steven :
+- Mendownload tiga zip masing-masing berisi folder FOTO yang berisikan file-file foto, MUSIK yang berisikan file-file musik, dan FILM yang berisikan file-file video, secara berurutan
+
+https://drive.google.com/file/d/1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD/view
+
+https://drive.google.com/file/d/1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J/view
+
+https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
+
+- Zip tersebut harus di-ekstrak. Karena hasil ekstraknya berupa folder, maka foldernya cukup diubah namanya secara berurutan (Jujur, sedikit alay) menjadi Pyoto, Musyik, dan Fylm
+
+- Tahapan diatas dilakukan secara otomatis pada jam 16.22 tanggal 9 April, 6 jam sebelum waktu ulang tahun Stevany, menurut Akte Kelahirannya
+
+- Pada saat waktu ulang tahunnya Stevany, jam 22.22 tanggal 9 April, secara otomatis folder-folder Pyoto, Musyik, dan Fylm dimasukkan ke dalam zip bernama Lopyu_Stevany.zip. Setelah itu, folder-folder yang sudah dimasukkan ke dalam zip dihapuskan sehingga hanya menyisakan zip-nya
+
+- Semua tahapan di atas dijadikan ke dalam satu script latar belakang (Daemon)
+- Tidak boleh menggunakan system(), mkdir(), rename(), cron
+- Harus menggunakan fork, exec, wait(), sleep(), dan wget
+
+# Penyelesaian Nomor 1
+
+
+
 # Nomor 3
 
 - Membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
