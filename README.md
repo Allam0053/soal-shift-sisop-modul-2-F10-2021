@@ -106,7 +106,7 @@ Jika waktu dalam sistem adalah jam 16.22 pada tanggal 9 April, maka soal nomor 1
 
 Perlu diketahui bahwa untuk timeinfo.tm_mon, Januari diterjemahkan menjadi bulan ke-0, bukan bulan ke-1, dan ada berbagai sub-struct yang dapat menyebutkan hari dengan berbagai format (Hari ke berapa dalam se-tahun, hari ke berapa dalam satu minggu, dan yang digunakan, hari ke berapa dalam satu bulan)
 
-## 1f. Memasukan folder-folder tadi ke dalam zip Lopyu_Stevany.zip
+## 1f. Memasukan folder-folder tadi ke dalam zip Lopyu_Stevany.zip pada jam 22.22 tanggal 9 April
 
       pid_t pid = fork();
       if (pid < 0) exit(EXIT_FAILURE);
