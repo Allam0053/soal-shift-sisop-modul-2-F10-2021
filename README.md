@@ -26,6 +26,7 @@ https://drive.google.com/file/d/1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp/view
 
 # Penyelesaian Nomor 1
 
+- Pertama membuat dasar-dasar dari membuat Daemon : Mematikan parent process, mememberikan akses penuh terhadap Daemon, membuat ID sesi unik, folder yang pasti ada (Untuk soal ini sempat dicoba di laptop lain, tapi masih bertancapkan di sistem utama (root)), dan menutup file deskriptor. Kegiatan utama Daemon terletak di dalam loop while(1) yang diakhiri dengan sleep(1) yang berarti Daemon diulangi setiap 1 detik, atau setiap saat
 - Website-website di atas akan diunduh menggunakan command bash :
 
       wget --no-check-certificate https://drive.google.com/uc?id=[id file]&export=download" -O [Namafile].zip
@@ -127,7 +128,6 @@ Ada dua operasi dalam 1f, yaitu memasukan folder Pyoto, Myusik, dan Fylm ke dala
 
 Command zip tidak akan juga memasukan file-file di dalam folder yang akan dimasukan ke dalam zip jika tidak diikuti dengan command -r (recursive) yang akan mengikutsertakan file-file di dalam folder. Begitupula dengan command rm, yang akan menghapus folder tersebut beserta file-file di dalamnya
 
-- Dan yang terakhir, seluruh operasi tersebut, dari 1a. sampai 1f., terletak di dalam while(1) dan diakhiri dengan sleep(). Fungsi sleep() adalah untuk menentukan setelah berapa detik program daemon menge-loop
 - Kesulitan dalam penyelesaian terletak pada batasan download dari Google Drive sehingga memunculkan error 403 dari ouput wget. Perlu beberapa kali restart untuk mendownload file zip dari link Google Drive tersebut. 
 
 # Nomor 2
